@@ -17,24 +17,15 @@ export default {
 				}
 
 				const reqBody = await readRequestBody(request);
-				const {results} = await env.DB.prepare(
-					"SELECT * FROM Accounts WHERE accountID = ?"
+				const parsedBody = JSON.parse(reqBody)
+				await env.DB.prepare(
+					"INSERT INTO AccountCosmetics (accountID, cosmeticID, isActive) VALUES (?, ?, ?)"
 				)
-				.bind(JSON.parse(reqBody)["accountID"])
-				.all();
+				.bind(parsedBody["accountID"], parsedBody["cosmeticID"], parsedBody["isActive"])
+				.run();
 
-				if (results.length !== 0) {
-					return Response.json(JSON.parse(error))
-				} else {
-					await env.DB.prepare(
-						"INSERT INTO AccountCosmetics (accountID, cosmeticID, isActive) VALUES (?, ?, ?)"
-					)
-					.bind(JSON.parse(reqBody)["accountID"])
-					.run();
-
-					const code = '{"code": 200}'
-					return Response.json(JSON.parse(code));
-				}
+				const code = '{"code": 200}'
+				return Response.json(JSON.parse(code));
 			}
 
 			case "/api/cosmetics": {
