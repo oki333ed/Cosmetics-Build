@@ -98,8 +98,12 @@ export default {
 				)
 				.bind(new URL(request.url).searchParams.get("accountID"))
 				.all();
-	
-				return Response.json(results);
+
+				if (results.length === 0) {
+					return buildErrorResponse(401, "Account not found");
+				} else {
+					return Response.json(results);
+				}
 			}
 		}
 
