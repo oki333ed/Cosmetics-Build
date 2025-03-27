@@ -28,13 +28,12 @@
 		"database_name": "prod-cosmetics",
 		"database_id": "980b607e-507a-4bc8-8fa6-33d815597587"
 		}
-	]
+	],
 
 	/**
 	 * Environment Variables
 	 * https://developers.cloudflare.com/workers/wrangler/configuration/#environment-variables
 	 */
-	// "vars": { "MY_VARIABLE": "production_value" },
 	/**
 	 * Note: Use secrets to store sensitive data.
 	 * https://developers.cloudflare.com/workers/configuration/secrets/
