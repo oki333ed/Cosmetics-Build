@@ -67,3 +67,18 @@ void APIManager::getAllCosmetics(std::function<void(std::vector<Cosmetic*>)> fun
         }
     }, [](auto progress) {}, [] {});
 }
+
+void APIManager::setCosmeticActive(int accountID, int cosmeticID, std::function<void()> func) {
+    web::WebRequest req = web::WebRequest();
+    matjson::Value body = matjson::Value();
+    body.set("accountID", accountID);
+    body.set("cosmeticID", cosmeticID);
+    req.bodyJSON(body);
+    req.post(fmt::format("{}/api/setCosmeticActive", API_URL)).listen([func](web::WebResponse* res) {
+        if (!res->ok()) {
+            log::error("APIManager setCosmeticActive returned code: {}", res->code());
+        } else {
+            func();
+        }
+    }, [](auto progress) {}, [] {});
+}

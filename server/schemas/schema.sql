@@ -10,7 +10,7 @@ CREATE TABLE IF NOT EXISTS Accounts (
 );
 
 CREATE TABLE IF NOT EXISTS AccountCosmetics (
-    accountID INTEGER PRIMARY KEY,
+    accountID INTEGER,
     cosmeticID INTEGER,
     isActive INTEGER
 );

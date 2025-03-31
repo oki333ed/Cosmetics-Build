@@ -33,6 +33,13 @@ All the endpoints for the server
     * accountID - int
   * Returns
     * JSON Object with all the cosmetics for a specific accountID
+* `/api/setCosmeticActive` POST Request
+  * Body Params
+    * accountID - int
+    * cosmeticID - int
+  * Returns
+    * 200 - Successfully set
+    * 400 - Wrong request type
 
 ## Account Endpoints
 * `/api/createUser` POST Request

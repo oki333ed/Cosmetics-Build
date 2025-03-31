@@ -105,6 +105,50 @@ export default {
 					return Response.json(results);
 				}
 			}
+			
+			case "/api/setCosmeticActive": {
+				if (request.method !== "POST") {
+					return buildErrorResponse(400, "Wrong request type");
+				}
+
+				const reqBody = await readRequestBody(request);
+				const parsedBody = JSON.parse(reqBody);
+				const cosmeticID = parsedBody["cosmeticID"];
+
+				const cosmeticCheck = await env.DB.prepare(
+					"SELECT * FROM AccountCosmetics WHERE accountID = ? AND cosmeticID = ?"
+				)
+				.bind(parsedBody["accountID"], cosmeticID)
+				.all();
+
+				if (cosmeticCheck.results.length === 0) return buildErrorResponse(401, "This account does not own this cosmetic");
+
+				if (cosmeticID > 1000 && cosmeticID < 2000) {
+					await env.DB.prepare(
+						"UPDATE AccountCosmetics SET isActive = 0 WHERE accountID = ? AND cosmeticID BETWEEN 1000 AND 2000"
+					).bind(parsedBody["accountID"]).run();
+				} else if (cosmeticID > 2000 && cosmeticID < 3000) {
+					await env.DB.prepare(
+						"UPDATE AccountCosmetics SET isActive = 0 WHERE accountID = ? AND cosmeticID BETWEEN 2000 AND 3000"
+					).bind(parsedBody["accountID"]).run();
+				} else if (cosmeticID > 3000 && cosmeticID < 4000) {
+					await env.DB.prepare(
+						"UPDATE AccountCosmetics SET isActive = 0 WHERE accountID = ? AND cosmeticID BETWEEN 3000 AND 4000"
+					).bind(parsedBody["accountID"]).run();
+				} else if (cosmeticID > 4000 && cosmeticID < 5000) {
+					await env.DB.prepare(
+						"UPDATE AccountCosmetics SET isActive = 0 WHERE accountID = ? AND cosmeticID BETWEEN 4000 AND 5000"
+					).bind(parsedBody["accountID"]).run();
+				}
+
+				const {results} = await env.DB.prepare(
+					"UPDATE AccountCosmetics SET isActive = 1 WHERE accountID = ? AND cosmeticID = ?"
+				)
+				.bind(parsedBody["accountID"], cosmeticID)
+				.run();
+
+				return buildSuccessResponse("Successfully set cosmetic")
+			}
 		}
 
 		return new Response (
