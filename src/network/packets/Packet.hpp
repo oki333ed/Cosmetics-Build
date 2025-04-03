@@ -1,5 +1,8 @@
 #pragma once
 
 #include <string>
-#include <utils/serialization.hpp>
 
+class Packet {
+public:
+    int packetID;
+};

@@ -1,5 +1,9 @@
 #pragma once
 
+#include <ixwebsocket/IXNetSystem.h>
+#include <ixwebsocket/IXWebSocket.h>
+#include <ixwebsocket/IXUserAgent.h>
+
 class NetworkManager {
 public:
     static NetworkManager* get() {
@@ -8,4 +12,6 @@ public:
     }
 
     void init();
+
+    
 };
