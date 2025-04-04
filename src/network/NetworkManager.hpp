@@ -29,6 +29,13 @@ public:
         geode::prelude::log::info("success?: {}", res.success);
     }
 
+    void handlePacket(int packetID, matjson::Value packetData);
+
+    template <typename Packet>
+    void handle(Packet const& packet) {
+        packet.handle();
+    }
+
 protected:
     ix::WebSocket webSocket;
 };

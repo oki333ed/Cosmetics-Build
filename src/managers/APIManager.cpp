@@ -5,36 +5,6 @@
 
 using namespace geode::prelude;
 
-void APIManager::addCosmeticToUser(int accountID, int cosmeticID, bool isActive, std::function<void()> func) {
-    web::WebRequest req = web::WebRequest();
-    matjson::Value body = matjson::Value();
-    body.set("accountID", accountID);
-    body.set("cosmeticID", cosmeticID);
-    body.set("isActive", (isActive) ? 1 : 0);
-    req.bodyJSON(body);
-    req.post(fmt::format("{}/api/addCosmeticToUser", API_URL)).listen([func](web::WebResponse* res) {
-        if (!res->ok()) {
-            log::error("APIManager addCosmeticToUser returned code: {}", res->code());
-        } else {
-            func();
-        }
-    });
-}
-
-void APIManager::createUser(int accountID, std::function<void()> func) {
-    web::WebRequest req = web::WebRequest();
-    matjson::Value body = matjson::Value();
-    body.set("accountID", accountID);
-    req.bodyJSON(body);
-    req.post(fmt::format("{}/api/createUser", API_URL)).listen([func](web::WebResponse* res) {
-        if (!res->ok()) {
-            log::error("APIManager createUser returned code: {}", res->code());
-        } else {
-            func();
-        }
-    });
-}
-
 void APIManager::getAccount(int accountID, std::function<void(Account*)> func) {
     web::WebRequest req = web::WebRequest();
 	req.param("accountID", GJAccountManager::get()->m_accountID);
@@ -64,21 +34,6 @@ void APIManager::getAllCosmetics(std::function<void(std::vector<Cosmetic*>)> fun
                 }
                 func(cosmetics);
             }
-        }
-    }, [](auto progress) {}, [] {});
-}
-
-void APIManager::setCosmeticActive(int accountID, int cosmeticID, std::function<void()> func) {
-    web::WebRequest req = web::WebRequest();
-    matjson::Value body = matjson::Value();
-    body.set("accountID", accountID);
-    body.set("cosmeticID", cosmeticID);
-    req.bodyJSON(body);
-    req.post(fmt::format("{}/api/setCosmeticActive", API_URL)).listen([func](web::WebResponse* res) {
-        if (!res->ok()) {
-            log::error("APIManager setCosmeticActive returned code: {}", res->code());
-        } else {
-            func();
         }
     }, [](auto progress) {}, [] {});
 }

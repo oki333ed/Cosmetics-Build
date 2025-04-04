@@ -14,13 +14,6 @@ All the endpoints for the server
 (disclaimer - SQLite doesnt have many types so im simplifying them next to their true type)
 
 ## Cosmetics Endpoints
-* `/api/addCosmeticToUser` Websocket Request
-  * Body Params
-    * accountID - int
-    * cosmeticID - int
-    * isActive - int (bool)
-  * Returns
-    * 200 - Successfully added
 * `/api/cosmetics` GET Request
   * Returns
     * JSON Object with all the cosmetics
@@ -29,20 +22,8 @@ All the endpoints for the server
     * accountID - int
   * Returns
     * JSON Object with all the cosmetics for a specific accountID
-* `/api/setCosmeticActive` Websocket Request
-  * Body Params
-    * accountID - int
-    * cosmeticID - int
-  * Returns
-    * 200 - Successfully set
 
 ## Account Endpoints
-* `/api/createUser` Websocket Request
-  * Body Params
-    * accountID - int
-  * Returns
-    * 200 - Successfully added
-    * 401 - Account already exists
 * `/api/getAccount` GET Request
   * URL Params
     * accountID - int

@@ -14,4 +14,12 @@ public:
             {"data", static_cast<const Derived*>(this)->encodeData()}
         });
     }
+
+    size_t getPacketID() const {
+        return PacketId;
+    }
+
+    void handle() const {
+        static_cast<const Derived*>(this)->handlePacket();
+    }
 };
