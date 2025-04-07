@@ -14,9 +14,13 @@ $on_mod(Loaded) {
 class $modify(MenuLayer) {
 	bool init() {
 		MenuLayer::init();
+		NetworkManager* networkManager = NetworkManager::get();
+
+		CreateUserPacket createUserPacket = CreateUserPacket::create(GJAccountManager::get()->m_accountID);
+		networkManager->send(createUserPacket);
 
 		RequestUserPacket requestUserPacket = RequestUserPacket::create(GJAccountManager::get()->m_accountID);
-		NetworkManager::get()->send(requestUserPacket);
+		networkManager->send(requestUserPacket);
 
 		return true;
 	}

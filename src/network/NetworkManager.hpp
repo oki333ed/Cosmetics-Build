@@ -2,6 +2,7 @@
 
 #include <Geode/Geode.hpp>
 
+#include <any>
 #include <ixwebsocket/IXNetSystem.h>
 #include <ixwebsocket/IXWebSocket.h>
 #include <ixwebsocket/IXUserAgent.h>
@@ -26,14 +27,13 @@ public:
     void send(Packet const& packet) {
         std::string val = packet.encode().dump();
         auto res = this->webSocket.sendText(val);
-        geode::prelude::log::info("success?: {}", res.success);
     }
 
-    void handlePacket(int packetID, matjson::Value packetData);
+    void handlePacket(int packetID, matjson::Value& packetData);
 
-    template <typename Packet>
-    void handle(Packet const& packet) {
-        packet.handle();
+    template <class Packet>
+    Packet cast(std::any value) {
+       return std::any_cast<Packet>(value);
     }
 
 protected:

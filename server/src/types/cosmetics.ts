@@ -1,5 +1,6 @@
 export type Cosmetic = {
     cosmeticID: number
+    cosmeticName: string
     isActive: number
 }
 

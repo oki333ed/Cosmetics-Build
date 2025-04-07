@@ -31,10 +31,10 @@ export function getActiveCosmetics(cosmetics: Cosmetic[]): ActiveCosmetics {
     let object: any = accountCosmetics.objects.find((object) => object.isActive === 1);
     let particle: any = accountCosmetics.particles.find((particle) => particle.isActive === 1);
 
-    if (hat === undefined) hat = 0
-    if (mask === undefined) mask = 0
-    if (object === undefined) object = 0
-    if (particle === undefined) particle = 0
+    if (hat === undefined) hat = null
+    if (mask === undefined) mask = null
+    if (object === undefined) object = null
+    if (particle === undefined) particle = null
 
     let activeCosmetics: ActiveCosmetics = {
         hat: hat,

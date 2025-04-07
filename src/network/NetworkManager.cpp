@@ -17,7 +17,7 @@ void NetworkManager::init() {
             case ix::WebSocketMessageType::Message: {
                 matjson::Value parsedMsg = matjson::parse(msg->str).unwrapOr(nullptr);
                 if (parsedMsg != nullptr) {
-                    this->handlePacket(parsedMsg["packetID"].asInt().unwrap(), parsedMsg["data"].object());
+                    this->handlePacket(parsedMsg["packetID"].asInt().unwrap(), parsedMsg["data"]);
                 }
                 break;
             }
@@ -30,11 +30,16 @@ void NetworkManager::init() {
     this->webSocket.start();
 }
 
-void NetworkManager::handlePacket(int packetID, matjson::Value packetData) {
+void NetworkManager::handlePacket(int packetID, matjson::Value& packetData) {
+    std::any packet = serverPackets[packetID];
     switch (packetID) {
         case 10001: {
-            this->handle(CreatedUserPacket(packetData));
+            this->cast<CreatedUserPacket>(packet).handlePacket(packetData);
             break;
+        }
+        
+        case 10003: {
+            this->cast<UserDataPacket>(packet).handlePacket(packetData);
         }
     }
 }

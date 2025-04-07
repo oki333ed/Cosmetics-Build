@@ -34,18 +34,28 @@ export async function createUser(accountID: number) {
     return packetRes;
 }
 
+export async function getCosmetic(cosmeticID: number) {
+    const cosmetic = await db.get("SELECT * FROM Cosmetics WHERE cosmeticID = ?", cosmeticID);
+
+    const cosmeticType: Cosmetic = {
+        cosmeticID: cosmetic["cosmeticID"],
+        cosmeticName: cosmetic["cosmeticName"],
+        isActive: cosmetic["isActive"]
+    }
+
+    return cosmeticType;
+}
+
 export async function getUserInfo(accountID: number): Promise<User> {
     const accRes = await db.get("SELECT * FROM Accounts WHERE accountID = ?", accountID)
     const cosRes = await db.all("SELECT * FROM AccountCosmetics WHERE accountID = ?", accountID)
 
     const allCosmetics: Cosmetic[] = [];
     cosRes.forEach((cosmetic: any) => {
-        let cos: Cosmetic = {
-            cosmeticID: cosmetic["cosmeticID"],
-            isActive: cosmetic["isActive"]
-        }
-
-        allCosmetics.push(cos)
+        getCosmetic(cosmetic["cosmeticID"]).then((cos) => {
+            cos["isActive"] = cosmetic["isActive"];
+            allCosmetics.push(cos);
+        })
     });
 
     const user: User = {
