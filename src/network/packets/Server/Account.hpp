@@ -3,6 +3,8 @@
 #include "network/packets/Packet.hpp"
 
 #include "managers/CosmeticManager.hpp"
+#include "network/NetworkManager.hpp"
+#include "network/packets/Client.hpp"
 
 class CreatedUserPacket : public Packet<CreatedUserPacket, 10001> {
 public:
@@ -10,40 +12,47 @@ public:
 
     void handlePacket(matjson::Value& packetData) {
         bool isSuccess = packetData["code"] == 200;
+        if (!isSuccess) {
+            NetworkManager::get()->send(RequestUserPacket::create(GJAccountManager::get()->m_accountID));
+            return;
+        }
+        
         geode::Loader::get()->queueInMainThread([packetData, isSuccess] {
             geode::Notification::create(
                 fmt::format("[Cosmetics]: {}", packetData["message"].asString().unwrap()), 
-                (isSuccess) ? geode::NotificationIcon::Success : geode::NotificationIcon::Error, 0.5f)->show();
+                geode::NotificationIcon::Success, 0.5f)->show();
     
         });
     }
 };
 
-class UserDataPacket : public Packet<CreatedUserPacket, 10003> {
+class UserDataPacket : public Packet<UserDataPacket, 10002> {
 public:
     UserDataPacket() {}
 
     void handlePacket(matjson::Value& packetData) {
-        geode::log::info("packetData: {}", packetData.dump());
         CosmeticsUser user = CosmeticsUser();
         user.setAccountID(packetData["accountID"].asInt().unwrap());
         user.setCreditsAmount(packetData["creditsAmount"].asInt().unwrap());
 
-        auto hat = (packetData["activeCosmetics"]["hat"].isNull()) ? new Cosmetic(
+        auto hat = (!packetData["activeCosmetics"]["hat"].isNull()) ? new Cosmetic(
             packetData["activeCosmetics"]["hat"]
-        ) : nullptr;
-        auto mask = (packetData["activeCosmetics"]["mask"].isNull()) ? new Cosmetic(
+        ) : new Cosmetic();
+        auto mask = (!packetData["activeCosmetics"]["mask"].isNull()) ? new Cosmetic(
             packetData["activeCosmetics"]["mask"]
-        ) : nullptr;
-        auto object = (packetData["activeCosmetics"]["object"].isNull()) ? new Cosmetic(
+        ) : new Cosmetic();
+        auto object = (!packetData["activeCosmetics"]["object"].isNull()) ? new Cosmetic(
             packetData["activeCosmetics"]["object"]
-        ) : nullptr;
-        auto particle = (packetData["activeCosmetics"]["particle"].isNull()) ? new Cosmetic(
+        ) : new Cosmetic();
+        auto particle = (!packetData["activeCosmetics"]["particle"].isNull()) ? new Cosmetic(
             packetData["activeCosmetics"]["particle"]
-        ) : nullptr;
-
+        ) : new Cosmetic();
+        
         user.setActiveCosmetics(ActiveCosmetics(
-            *hat, *mask, *object, *particle
+            *hat, 
+            *mask, 
+            *object, 
+            *particle
         ));
 
         std::vector<Cosmetic> hats, masks, objects, particles;

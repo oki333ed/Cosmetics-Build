@@ -38,8 +38,32 @@ void NetworkManager::handlePacket(int packetID, matjson::Value& packetData) {
             break;
         }
         
-        case 10003: {
+        case 10002: {
             this->cast<UserDataPacket>(packet).handlePacket(packetData);
+            break;
+        }
+
+        case 12001: {
+            this->cast<CosmeticAddedPacket>(packet).handlePacket(packetData);
+            break;
+        }
+
+        case 12002: {
+            this->cast<CosmeticSetActivePacket>(packet).handlePacket(packetData);
+            break;
+        }
+
+        case 12003: {
+            this->cast<UserCosmeticsPacket>(packet).handlePacket(packetData);
+            break;
         }
     }
+}
+
+bool NetworkManager::connected() {
+    if (this->webSocket.getReadyState() == ix::ReadyState::Open) {
+        return true;
+    }
+
+    return false;
 }

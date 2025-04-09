@@ -1,6 +1,5 @@
 import { ExtendedWebSocket } from "websocket-express";
 import { buildPacket } from "./packets";
-import { User } from "../types/user";
 import { createUser, getUserInfo } from "../database/database";
 
 export function handleAccountPacket(parsedMsg: any, ws: ExtendedWebSocket) {
@@ -25,6 +24,6 @@ function createUserPacket(parsedMsg: any, ws: ExtendedWebSocket) {
 
 function requestUserPacket(parsedMsg: any, ws: ExtendedWebSocket) {
     getUserInfo(parsedMsg["data"]["accountID"]).then((userInfo) => {
-        ws.send(buildPacket(10003, userInfo))
+        ws.send(buildPacket(10002, userInfo))
     })
 }

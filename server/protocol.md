@@ -13,11 +13,16 @@ All the client packets
 ## Cosmetics Packets
 * 2001 - AddCosmeticPacket
 * 2002 - SetCosmeticActivePacket
+* 2003 - RequestUserCosmeticsPacket
 
 # Server
 All the server packets
 
 ## Account Packets
 * 10001 - UserCreatedPacket
-* 10002 - UserUpdatedPacket
-* 10003 - UserDataPacket
+* 10002 - UserDataPacket
+
+## Cosmetics Packets
+* 12001 - CosmeticAddedPacket
+* 12002 - CosmeticSetActivePacket
+* 12003 - UserCosmeticsPacket

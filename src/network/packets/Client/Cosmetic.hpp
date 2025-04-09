@@ -52,3 +52,23 @@ protected:
     int accountID;
     int cosmeticID;
 };
+
+class RequestUserCosmeticsPacket : public Packet<RequestUserCosmeticsPacket, 2003> {
+public:
+    RequestUserCosmeticsPacket(int accountID) : accountID(accountID) {}
+
+    static RequestUserCosmeticsPacket create(int accountID) {
+        return RequestUserCosmeticsPacket(accountID);
+    }
+
+    friend class Packet;
+
+protected:
+    matjson::Value encodeData() const {
+        return matjson::makeObject({
+            {"accountID", accountID}
+        });
+    }
+
+    int accountID;
+};

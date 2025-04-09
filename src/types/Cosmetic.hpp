@@ -8,21 +8,30 @@ class Cosmetic {
 public:
     Cosmetic() {}
 
-    Cosmetic(int cosmeticID, std::string cosmeticName, int cosmeticAmount) {
+    Cosmetic(int cosmeticID, std::string cosmeticName, int cosmeticAmount, int isActive) {
         this->cosmeticID = cosmeticID;
         this->cosmeticName = cosmeticName;
         this->cosmeticAmount = cosmeticAmount;
+        this->isActive = (isActive == 0) ? false : true;
     }
 
     Cosmetic(matjson::Value value) {
         this->cosmeticID = value["cosmeticID"].asInt().unwrap();
         this->cosmeticName = value["cosmeticName"].asString().unwrap();
-        this->cosmeticAmount = value["cosmeticAmount"].asInt().unwrap();
+        this->cosmeticAmount = value["cosmeticAmount"].asInt().unwrapOr(0);
+        this->isActive = (value["isActive"].asInt().unwrapOr(0) == 0) ? false : true;
     }
 
     int getCosmeticID() {return this->cosmeticID;}
     std::string getCosmeticName() {return this->cosmeticName;}
     int getCosmeticAmount() {return this->cosmeticAmount;}
+
+    bool isEmpty() {
+        if (cosmeticName.empty() && cosmeticID == 0 && cosmeticAmount == 0) 
+            return true;
+
+        return false;
+    }
 
     void setCosmeticID(int cosID) {this->cosmeticID = cosID;}
     void setCosmeticName(std::string name) {this->cosmeticName = name;}
@@ -31,6 +40,7 @@ protected:
     int cosmeticID;
     std::string cosmeticName;
     int cosmeticAmount;
+    bool isActive;
 };
 
 class ActiveCosmetics {

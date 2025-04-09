@@ -13,5 +13,21 @@
 		"LimeGradient",
 		"Dasshu"
 	],
-	"description": "Add cosmetics to Geometry Dash!"
+	"description": "Add cosmetics to Geometry Dash!",
+	"resources": {
+		"spritesheets": {
+			"HatsSheet": [
+				"resources/hats/*.png"
+			],
+			"MasksSheet": [
+				"resources/masks/*.png"
+			]
+		}
+	},
+	"dependencies": {
+		"geode.node-ids": {
+			"version": ">=1.20.1",
+			"importance": "required"
+		}
+	}
 }

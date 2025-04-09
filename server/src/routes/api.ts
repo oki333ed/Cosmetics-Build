@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 
 import {Router} from "websocket-express";
 import { handleAccountPacket } from "../handlers/account";
+import { handleCosmeticPacket } from "../handlers/cosmetics";
 
 export const apiRouter = new Router();
 
@@ -16,6 +17,8 @@ apiRouter.ws("/handlews", async (req, res) => {
 		const packetID = parsedMsg["packetID"]
 		if (packetID > 1000 && packetID < 2000) {
 			handleAccountPacket(parsedMsg, ws);
+		} else if (packetID > 2000 && packetID < 3000) {
+			handleCosmeticPacket(parsedMsg, ws)
 		}
 	});
 });

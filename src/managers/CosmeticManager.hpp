@@ -11,8 +11,9 @@ public:
         return &instance;
     }
 
-    CosmeticsUser getSelfUser() { return this->selfUser; }
+    
 
+    CosmeticsUser getSelfUser() { return this->selfUser; }
     void setSelfUser(CosmeticsUser user) { this->selfUser = user; }
 
 protected:

@@ -36,6 +36,8 @@ public:
        return std::any_cast<Packet>(value);
     }
 
+    bool connected();
+
 protected:
     ix::WebSocket webSocket;
 };

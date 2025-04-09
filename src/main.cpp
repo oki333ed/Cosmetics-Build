@@ -1,6 +1,8 @@
 #include <Geode/Geode.hpp>
-#include <Geode/modify//MenuLayer.hpp>
+#include <Geode/modify/MenuLayer.hpp>
+#include <Geode/modify/PlayerObject.hpp>
 
+#include <managers/CosmeticManager.hpp>
 #include <network/packets/Client.hpp>
 #include <network/NetworkManager.hpp>
 
@@ -16,11 +18,13 @@ class $modify(MenuLayer) {
 		MenuLayer::init();
 		NetworkManager* networkManager = NetworkManager::get();
 
-		CreateUserPacket createUserPacket = CreateUserPacket::create(GJAccountManager::get()->m_accountID);
-		networkManager->send(createUserPacket);
+		if (networkManager->connected()) {
+			AddCosmeticPacket addCosmeticPacket = AddCosmeticPacket::create(GJAccountManager::get()->m_accountID, 2001, true);
+			networkManager->send(addCosmeticPacket);
 
-		RequestUserPacket requestUserPacket = RequestUserPacket::create(GJAccountManager::get()->m_accountID);
-		networkManager->send(requestUserPacket);
+			CreateUserPacket createUserPacket = CreateUserPacket::create(GJAccountManager::get()->m_accountID);
+			networkManager->send(createUserPacket);
+		}
 
 		return true;
 	}
