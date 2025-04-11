@@ -4,6 +4,7 @@
 #include <typeinfo>
 
 #include <matjson.hpp>
+#include <network/NetworkManager.hpp>
 
 template <typename Derived, size_t PacketId>
 class Packet {
@@ -15,7 +16,7 @@ public:
         });
     }
 
-    size_t getPacketID() const {
+    int getPacketID() const {
         return PacketId;
     }
 };

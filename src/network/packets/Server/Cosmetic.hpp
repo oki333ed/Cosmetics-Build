@@ -1,5 +1,6 @@
 #pragma once
 
+#include <managers/CosmeticManager.hpp>
 #include "network/packets/Packet.hpp"
 
 class CosmeticAddedPacket : public Packet<CosmeticAddedPacket, 12001> {
@@ -25,6 +26,7 @@ public:
     UserCosmeticsPacket() {}
 
     void handlePacket(matjson::Value& packetData) {
+        auto activeCosmetics = CosmeticManager::get()->activeCosmeticsFromJSON(packetData);
         
     }
 };

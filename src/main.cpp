@@ -19,8 +19,7 @@ class $modify(MenuLayer) {
 		NetworkManager* networkManager = NetworkManager::get();
 
 		if (networkManager->connected()) {
-			AddCosmeticPacket addCosmeticPacket = AddCosmeticPacket::create(GJAccountManager::get()->m_accountID, 2001, true);
-			networkManager->send(addCosmeticPacket);
+			networkManager->send(RequestUserCosmeticsPacket::create(GJAccountManager::get()->m_accountID));
 
 			CreateUserPacket createUserPacket = CreateUserPacket::create(GJAccountManager::get()->m_accountID);
 			networkManager->send(createUserPacket);

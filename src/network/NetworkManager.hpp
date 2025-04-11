@@ -9,6 +9,11 @@
 
 #define API_URL "ws://127.0.0.1:8787/api/handlews"
 
+template <typename T>
+struct EventData {
+    T data;
+};
+
 class NetworkManager {
 public:
     ~NetworkManager() {
@@ -37,7 +42,6 @@ public:
     }
 
     bool connected();
-
 protected:
     ix::WebSocket webSocket;
 };

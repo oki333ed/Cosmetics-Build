@@ -3,19 +3,12 @@
 #include <Geode/Geode.hpp>
 #include <UIBuilder.hpp>
 
+#include <dankmeme.globed2/include/player.hpp>
 #include <managers/CosmeticManager.hpp>
+#include <network/NetworkManager.hpp>
+#include <network/packets/Client.hpp>
 
 using namespace geode::prelude;
-
-bool CosmeticsPlayerObject::init(int p0, int p1, GJBaseGameLayer* p2, cocos2d::CCLayer* p3, bool p4) {
-    if (!PlayerObject::init(p0, p1, p2, p3, p4)) return false;
-
-
-    if (!CosmeticManager::get()->getSelfUser().isEmpty())
-        this->setCosmetics(CosmeticManager::get()->getSelfUser().getActiveCosmetics());
-
-    return true;
-}
 
 void CosmeticsPlayerObject::setCosmetics(ActiveCosmetics cosmetics) {
     m_fields->m_activeCosmetics = cosmetics;
