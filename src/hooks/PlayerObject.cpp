@@ -10,6 +10,12 @@
 
 using namespace geode::prelude;
 
+void CosmeticsPlayerObject::resetObject()  {
+    PlayerObject::resetObject();
+
+    this->setCosmetics(m_fields->m_activeCosmetics);
+}
+
 void CosmeticsPlayerObject::setCosmetics(ActiveCosmetics cosmetics) {
     m_fields->m_activeCosmetics = cosmetics;
     this->drawHat(cosmetics.getHat());
@@ -50,10 +56,10 @@ void CosmeticsPlayerObject::drawMask(Cosmetic mask) {
     }
 
     CCSprite* spr;
-    auto regularPos = this->m_iconSprite->getScaledContentSize();
+    auto regularPos = this->m_iconSprite->getScaledContentSize() + CCPoint{6.5f, 6.5f};
     auto* regularMask = Build<CCSprite>::createSpriteName(fmt::format("{}.png"_spr, mask.getCosmeticID()).c_str())
         .scale(0.5f)
-        .id(fmt::format("hat-{}", mask.getCosmeticID()))
+        .id(fmt::format("mask-{}", mask.getCosmeticID()))
         .parent(this->m_iconSprite)
         .store(spr)
         .schedule([spr, rpos = regularPos](float dt) {

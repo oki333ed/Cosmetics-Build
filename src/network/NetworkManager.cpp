@@ -57,6 +57,10 @@ void NetworkManager::handlePacket(int packetID, matjson::Value& packetData) {
             this->cast<UserCosmeticsPacket>(packet).handlePacket(packetData);
             break;
         }
+
+        case 12004: {
+            this->cast<AllCosmeticsPacket>(packet).handlePacket(packetData);
+        }
     }
 }
 

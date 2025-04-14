@@ -72,3 +72,19 @@ protected:
 
     int accountID;
 };
+
+class RequestAllCosmeticsPacket : public Packet<RequestAllCosmeticsPacket, 2004> {
+public:
+    RequestAllCosmeticsPacket() {}
+
+    static RequestAllCosmeticsPacket create() {
+        return RequestAllCosmeticsPacket();
+    }
+
+    friend class Packet;
+
+protected:
+    matjson::Value encodeData() const {
+        return matjson::Value();
+    }
+};

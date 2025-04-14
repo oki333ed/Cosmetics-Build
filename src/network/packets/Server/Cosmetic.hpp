@@ -1,7 +1,8 @@
 #pragma once
 
+#include <events/EventDispatcher.hpp>
 #include <managers/CosmeticManager.hpp>
-#include "network/packets/Packet.hpp"
+#include <network/packets/Packet.hpp>
 
 class CosmeticAddedPacket : public Packet<CosmeticAddedPacket, 12001> {
 public:
@@ -27,6 +28,20 @@ public:
 
     void handlePacket(matjson::Value& packetData) {
         auto activeCosmetics = CosmeticManager::get()->activeCosmeticsFromJSON(packetData);
-        
+        Cosmetics::EventDispatcher::get()->dispatch("UserCosmeticsPacket", activeCosmetics);
+    }
+};
+
+class AllCosmeticsPacket : public Packet<AllCosmeticsPacket, 12004> {
+public:
+    AllCosmeticsPacket() {}
+
+    void handlePacket(matjson::Value& packetData) {
+        std::vector<Cosmetic> cosmetics;
+        for (auto cosmetic : packetData.asArray().unwrap()) {
+            cosmetics.push_back(Cosmetic(cosmetic));
+        }
+
+        Cosmetics::EventDispatcher::get()->dispatch("AllCosmeticsPacket", cosmetics);
     }
 };

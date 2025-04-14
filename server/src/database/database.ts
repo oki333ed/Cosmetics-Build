@@ -1,7 +1,7 @@
 import * as sqlite3 from "sqlite3";
 import {open, Database} from 'sqlite';
 import { User } from "../types/user";
-import { Cosmetic } from "../types/cosmetics";
+import { Cosmetic, FullCosmetic } from "../types/cosmetics";
 import { filterAllCosmetics, getActiveCosmetics } from "../utils";
 import { PacketResponse } from "../types/response";
 
@@ -51,6 +51,23 @@ export async function createUser(accountID: number) {
     }
 
     return packetRes;
+}
+
+export async function getAllCosmetics() {
+    const cosmetics = await db.all("SELECT * FROM Cosmetics")
+
+    let allCosmetics: Cosmetic[] = []
+    await Promise.all(cosmetics.map(async (cosmetic: any) => {
+        let newCos: FullCosmetic = {
+            cosmeticID: cosmetic["cosmeticID"],
+            cosmeticName: cosmetic["cosmeticName"],
+            cosmeticAmount: cosmetic["cosmeticAmount"],
+            isActive: 0
+        }
+        allCosmetics.push(newCos)
+    }));
+
+    return allCosmetics
 }
 
 export async function getCosmetic(cosmeticID: number) {

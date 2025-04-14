@@ -1,3 +1,4 @@
+#include <defs.hpp>
 #include <Geode/Geode.hpp>
 #include <Geode/modify/MenuLayer.hpp>
 #include <Geode/modify/PlayerObject.hpp>
@@ -13,17 +14,22 @@ $on_mod(Loaded) {
     networkManager->init();
 }
 
+$on_game(Loaded) {
+	NetworkManager* networkManager = NetworkManager::get();
+
+	if (networkManager->connected()) {
+		// auth
+		networkManager->send(RequestUserCosmeticsPacket::create(GJAccountManager::get()->m_accountID));
+		networkManager->send(CreateUserPacket::create(GJAccountManager::get()->m_accountID));
+	
+		
+	}
+}
+
 class $modify(MenuLayer) {
 	bool init() {
 		MenuLayer::init();
-		NetworkManager* networkManager = NetworkManager::get();
-
-		if (networkManager->connected()) {
-			networkManager->send(RequestUserCosmeticsPacket::create(GJAccountManager::get()->m_accountID));
-
-			CreateUserPacket createUserPacket = CreateUserPacket::create(GJAccountManager::get()->m_accountID);
-			networkManager->send(createUserPacket);
-		}
+		
 
 		return true;
 	}

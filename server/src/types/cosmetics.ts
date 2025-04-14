@@ -4,6 +4,13 @@ export type Cosmetic = {
     isActive: number
 }
 
+export type FullCosmetic = {
+    cosmeticID: number
+    cosmeticName: string
+    cosmeticAmount: number
+    isActive: number
+}
+
 export type ActiveCosmetics = {
     hat: Cosmetic
     mask: Cosmetic

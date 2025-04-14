@@ -12,7 +12,7 @@ bool HookedGJGarageLayer::init() {
 
     Build<CCSprite>::createSpriteName("GJ_menuBtn_001.png")
         .scale(0.75f)
-        .intoMenuItem([]() {
+        .intoMenuItem([this]() {
             CosmeticsUser user = CosmeticManager::get()->getSelfUser();
             CosmeticSelectPopup::create(user)->show();
         })

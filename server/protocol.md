@@ -14,6 +14,7 @@ All the client packets
 * 2001 - AddCosmeticPacket
 * 2002 - SetCosmeticActivePacket
 * 2003 - RequestUserCosmeticsPacket
+* 2004 - RequestAllCosmeticsPacket
 
 # Server
 All the server packets
@@ -26,3 +27,4 @@ All the server packets
 * 12001 - CosmeticAddedPacket
 * 12002 - CosmeticSetActivePacket
 * 12003 - UserCosmeticsPacket
+* 12004 - AllCosmeticsPacket

@@ -1,5 +1,5 @@
 import { ExtendedWebSocket } from "websocket-express";
-import { addCosmetic, getUserCosmetics, setCosmeticActive } from "../database/database";
+import { addCosmetic, getAllCosmetics, getUserCosmetics, setCosmeticActive } from "../database/database";
 import { buildPacket } from "./packets";
 
 export function handleCosmeticPacket(parsedMSG: any, ws: ExtendedWebSocket) {
@@ -16,6 +16,11 @@ export function handleCosmeticPacket(parsedMSG: any, ws: ExtendedWebSocket) {
 
         case 2003: {
             requestUserCosmeticsPacket(parsedMSG, ws)
+            break;
+        }
+
+        case 2004: {
+            allCosmeticsPacket(ws)
             break;
         }
     }
@@ -36,5 +41,11 @@ function setCosmeticActivePacket(parsedMSG: any, ws: ExtendedWebSocket) {
 function requestUserCosmeticsPacket(parsedMSG: any, ws: ExtendedWebSocket) {
     getUserCosmetics(parsedMSG["data"]["accountID"]).then((cosmetics) => {
         ws.send(buildPacket(12003, cosmetics))
+    })
+}
+
+function allCosmeticsPacket(ws: ExtendedWebSocket) {
+    getAllCosmetics().then((cosmetics) => {
+        ws.send(buildPacket(12004, cosmetics))
     })
 }

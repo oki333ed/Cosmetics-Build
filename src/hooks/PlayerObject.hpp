@@ -10,6 +10,9 @@ struct CosmeticsPlayerObject : geode::Modify<CosmeticsPlayerObject, PlayerObject
         ActiveCosmetics m_activeCosmetics;
     };
 
+    $override
+    void resetObject();
+
     void setCosmetics(ActiveCosmetics cosmetics);
     void drawHat(Cosmetic hat);
     void drawMask(Cosmetic mask);

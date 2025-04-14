@@ -27,7 +27,7 @@ public:
     int getCosmeticAmount() {return this->cosmeticAmount;}
 
     bool isEmpty() {
-        if (cosmeticName.empty() && cosmeticID == 0 && cosmeticAmount == 0) 
+        if (cosmeticID == 0) 
             return true;
 
         return false;
@@ -37,10 +37,10 @@ public:
     void setCosmeticName(std::string name) {this->cosmeticName = name;}
     void setCosmeticAmount(int amount) {this->cosmeticAmount = amount;}
 protected:
-    int cosmeticID;
+    int cosmeticID = 0;
     std::string cosmeticName;
-    int cosmeticAmount;
-    bool isActive;
+    int cosmeticAmount = 0;
+    bool isActive = false;
 };
 
 class ActiveCosmetics {
@@ -57,6 +57,12 @@ public:
     Cosmetic getMask() { return this->mask; }
     Cosmetic getObject() { return this->object; }
     Cosmetic getParticle() { return this->particle; }
+
+    bool isEmpty() {
+        if (hat.isEmpty() && mask.isEmpty() && object.isEmpty() && particle.isEmpty()) return true;
+
+        return false;
+    }
 
     void setHat(Cosmetic hat) { this->hat = hat; }
     void setMask(Cosmetic mask) { this->mask = mask; }
