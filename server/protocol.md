@@ -9,6 +9,7 @@ All the client packets
 * 1001 - CreateUserPacket
 * 1002 - UpdateUserPacket
 * 1003 - RequestUserPacket
+* 1004 - RequestAuthPacket
 
 ## Cosmetics Packets
 * 2001 - AddCosmeticPacket
@@ -22,6 +23,7 @@ All the server packets
 ## Account Packets
 * 10001 - UserCreatedPacket
 * 10002 - UserDataPacket
+* 10003 - UserAuthPacket
 
 ## Cosmetics Packets
 * 12001 - CosmeticAddedPacket

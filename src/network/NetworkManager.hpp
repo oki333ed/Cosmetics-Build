@@ -42,6 +42,10 @@ public:
     }
 
     bool connected();
+
+    
 protected:
+    bool isServerOnline();
+
     ix::WebSocket webSocket;
 };

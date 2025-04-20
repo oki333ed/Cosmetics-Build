@@ -19,6 +19,7 @@ endif()
 add_subdirectory($ENV{GEODE_SDK} ${CMAKE_CURRENT_BINARY_DIR}/geode)
 
 CPMAddPackage("gh:camila314/uibuilder#main")
+CPMAddPackage("gh:GlobedGD/argon@1.0.1")
 
 if (CMAKE_SYSTEM_NAME STREQUAL "Windows")
     add_compile_definitions(WIN32_LEAN_AND_MEAN=1)
@@ -51,6 +52,6 @@ CPMAddPackage("gh:machinezone/IXWebSocket#dc8807e")
 install(TARGETS mbedtls mbedx509 mbedcrypto EXPORT mbedtls-targets)
 target_include_directories(${PROJECT_NAME} PRIVATE ${ixwebsocket_SOURCE_DIR} "${cereal_SOURCE_DIR}/include" src/)
 
-target_link_libraries(${PROJECT_NAME} ixwebsocket UIBuilder)
+target_link_libraries(${PROJECT_NAME} ixwebsocket UIBuilder argon)
 
 setup_geode_mod(${PROJECT_NAME})

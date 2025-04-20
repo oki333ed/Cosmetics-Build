@@ -20,9 +20,9 @@ bool CosmeticSelectPopup::setup(CosmeticsUser& user) {
     NetworkManager::get()->send(RequestAllCosmeticsPacket::create());
 
     auto eventDispatcher = Cosmetics::EventDispatcher::get();
-    eventDispatcher->registerListener(new Cosmetics::Event<std::vector<Cosmetic>>("AllCosmeticsPacket", [player](std::vector<Cosmetic> cosmetics) {
+    eventDispatcher->registerListener(new Cosmetics::Event<std::vector<Cosmetic>>("AllCosmeticsPacket", [player, this](std::vector<Cosmetic> cosmetics) {
         for (auto cosmetic : cosmetics) {
-            log::info("cosmetic name: {} - cosmetic id: {} - cosmetic amount: {}", cosmetic.getCosmeticName(), cosmetic.getCosmeticID(), cosmetic.getCosmeticAmount());
+            this->drawAllCosmetics(cosmetics);
         }
     }));
 
@@ -84,6 +84,23 @@ SimplePlayer* CosmeticSelectPopup::drawPlayer(IconType type, CCNode* baseNode, C
     }
 
     return player;
+}
+
+void CosmeticSelectPopup::drawAllCosmetics(std::vector<Cosmetic> cosmetics) {
+    for (auto cosmetic : cosmetics) {
+        auto btnMenu = Build<CCMenu>::create()
+            .layout(SimpleRowLayout::create())
+            .collect();
+
+        m_mainLayer->addChildAtPosition(btnMenu, Anchor::Right, {-50.f, 0.f});
+    
+        auto cosmeticIcon = Build<CCSprite>::createSpriteName(fmt::format("{}.png"_spr, cosmetic.getCosmeticID()).c_str())
+            .scale(0.5f)
+            .parent(btnMenu)
+            .collect();
+        
+        btnMenu->updateLayout();
+    }
 }
 
 void CosmeticSelectPopup::drawHat(Cosmetic hat, SimplePlayer* player) {

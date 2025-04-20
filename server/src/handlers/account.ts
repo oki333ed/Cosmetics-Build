@@ -17,7 +17,7 @@ export function handleAccountPacket(parsedMsg: any, ws: ExtendedWebSocket) {
 }
 
 function createUserPacket(parsedMsg: any, ws: ExtendedWebSocket) {
-    createUser(parsedMsg["data"]["accountID"]).then((message) => {
+    createUser(parsedMsg["data"]["accountID"], parsedMsg["data"]["token"]).then((message) => {
         ws.send(buildPacket(10001, message))
     })
 }

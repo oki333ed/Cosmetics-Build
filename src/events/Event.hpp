@@ -5,6 +5,8 @@
 namespace Cosmetics {
     class IEvent {
     public:
+        virtual ~IEvent() {}
+
         virtual const std::string& getName() const = 0;
     };
 

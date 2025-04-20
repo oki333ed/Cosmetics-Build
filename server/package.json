@@ -26,6 +26,7 @@
   },
   "dependencies": {
     "@types/ws": "^8.18.1",
+    "axios": "^1.8.4",
     "cors": "^2.8.5",
     "sqlite": "^5.1.1",
     "sqlite3": "^5.1.7",

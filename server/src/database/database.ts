@@ -1,4 +1,6 @@
 import * as sqlite3 from "sqlite3";
+import axios, {Axios} from "axios"
+
 import {open, Database} from 'sqlite';
 import { User } from "../types/user";
 import { Cosmetic, FullCosmetic } from "../types/cosmetics";
@@ -34,22 +36,27 @@ export async function addCosmetic(accountID: number, cosmeticID: number, isActiv
     return packetRes;
 }
 
-export async function createUser(accountID: number) {
+export async function createUser(accountID: number, token: string) {
     let packetRes: PacketResponse = {
         code: 0,
         message: ''
     };
 
-    const doesAccExist = await db.get("SELECT * FROM Accounts WHERE accountID = ?", accountID)
-    if (doesAccExist !== undefined) {
-        packetRes.code = 401;
-        packetRes.message = "Account already exists!"
-    } else {
-        await db.run("INSERT INTO Accounts (accountID, creditsAmount) VALUES (?, 0)", accountID)
-        packetRes.code = 200;
-        packetRes.message = "Account created successfully!"
-    }
+    await axios.get(`https://argon.globed.dev/v1/validation/check?account_id=${accountID}&authtoken=${token}`).then(async (res) => {
+        if (res.data["valid"] == true) {
+            const doesAccExist = await db.get("SELECT * FROM Accounts WHERE accountID = ?", accountID)
+            if (doesAccExist !== undefined) {
+                packetRes.code = 401;
+                packetRes.message = "Account already exists!"
+            } else {
+                await db.run("INSERT INTO Accounts (accountID, creditsAmount) VALUES (?, 0)", accountID)
+                packetRes.code = 200;
+                packetRes.message = "Account created successfully!"
+            }
+        }
+    })
 
+    console.log(packetRes)
     return packetRes;
 }
 

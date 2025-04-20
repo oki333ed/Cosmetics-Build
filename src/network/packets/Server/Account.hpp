@@ -2,9 +2,10 @@
 
 #include "network/packets/Packet.hpp"
 
-#include "managers/CosmeticManager.hpp"
-#include "network/NetworkManager.hpp"
-#include "network/packets/Client.hpp"
+#include <events/EventDispatcher.hpp>
+#include <managers/CosmeticManager.hpp>
+#include <network/NetworkManager.hpp>
+#include <network/packets/Client.hpp>
 
 class CreatedUserPacket : public Packet<CreatedUserPacket, 10001> {
 public:

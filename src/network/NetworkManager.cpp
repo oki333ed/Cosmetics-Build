@@ -2,6 +2,8 @@
 
 #include "packets/Server.hpp"
 
+#include <Geode/utils/web.hpp>
+
 using namespace geode::prelude;
 
 void NetworkManager::init() {

@@ -7,6 +7,8 @@
 #include <network/packets/Client.hpp>
 #include <network/NetworkManager.hpp>
 
+#include <argon/argon.hpp>
+
 using namespace geode::prelude;
 
 $on_mod(Loaded) {
@@ -19,10 +21,23 @@ $on_game(Loaded) {
 
 	if (networkManager->connected()) {
 		// auth
-		networkManager->send(RequestUserCosmeticsPacket::create(GJAccountManager::get()->m_accountID));
-		networkManager->send(CreateUserPacket::create(GJAccountManager::get()->m_accountID));
-	
-		
+		auto res = argon::startAuth([networkManager](Result<std::string> res) {
+			if (!res) {
+				log::warn("Argon Auth failed: {}", res.unwrapErr());
+				return;
+			}
+
+			auto token = std::move(res).unwrap();
+			networkManager->send(CreateUserPacket::create(GJAccountManager::get()->m_accountID, token));
+		}, [](argon::AuthProgress progress) {
+			log::info("Auth progress: {}", argon::authProgressToString(progress));
+		});
+
+		if (!res) {
+			log::warn("Failed to start auth attempt: {}", res.unwrapErr());
+		} else {
+			res.unwrap();
+		}
 	}
 }
 

@@ -31,7 +31,7 @@ namespace Cosmetics {
         void dispatch(const std::string& eventName, _args... a) {
             auto it_eventList = _eventList.find( eventName );
             if ( it_eventList == _eventList.end() )
-            return;
+                return;
             for ( auto ie : it_eventList->second )
             {
             if ( Event<_args...> * event = dynamic_cast<Event<_args...>*>( ie ) )

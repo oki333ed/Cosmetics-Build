@@ -10,6 +10,7 @@ protected:
 
     int getPlayerIconIndex(IconType type);
     SimplePlayer* drawPlayer(IconType type, cocos2d::CCNode* baseNode, CosmeticsUser& user);
+    void drawAllCosmetics(std::vector<Cosmetic> cosmetics);
 
     void drawHat(Cosmetic hat, SimplePlayer* player);
     void drawMask(Cosmetic mask, SimplePlayer* player);

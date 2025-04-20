@@ -4,10 +4,10 @@
 
 class CreateUserPacket : public Packet<CreateUserPacket, 1001> {
 public:
-    CreateUserPacket(int accountID) : accountID(accountID) {}
+    CreateUserPacket(int accountID, std::string token) : accountID(accountID), token(token) {}
 
-    static CreateUserPacket create(int accountID) {
-        return CreateUserPacket(accountID);
+    static CreateUserPacket create(int accountID, std::string token) {
+        return CreateUserPacket(accountID, token);
     }
 
     friend class Packet;
@@ -15,11 +15,13 @@ public:
 protected:
     matjson::Value encodeData() const {
         return matjson::makeObject({
-            {"accountID", accountID}
+            {"accountID", accountID},
+            {"token", token}
         });
     }
 
     int accountID;
+    std::string token;
 };
 
 class UpdateUserPacket : public Packet<UpdateUserPacket, 1002> {
