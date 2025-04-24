@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <link rel="stylesheet" href="dashboard.css">
+    <script src="types/packet.js"></script>
+</head>
+<body>
+    <main>
+        <div class="panel">
+            <h1>Add Admin</h1>
+            <form>
+                <label for="accountID">Account ID: </label> <br>
+                <input type="text" id="accountID" name="accountID"> <br>
+                <br>
+                <label for="password">Admin Password: </label> <br>
+                <input type="password" id="password" name="password"> <br> <br>
+            </form>
+            <button onclick="addAdmin()">Add Admin</button>
+        </div>
+        <div class="panel">
+            <h1>Change Item Shop</h1>
+            <label for="item1">Item 1</label>
+            <select name="item1" id="item-select"></select> <br>
+            <label for="item2">Item 2</label>
+            <select name="item2" id="item-select"></select> <br>
+            <label for="item3">Item 3</label>
+            <select name="item3" id="item-select"></select> <br>
+            <label for="item4">Item 4</label>
+            <select name="item4" id="item-select"></select> <br>
+            <label for="item5">Item 5</label>
+            <select name="item5" id="item-select"></select> <br>
+            <label for="item6">Item 6</label>
+            <select name="item6" id="item-select"></select> <br>
+            <button onclick="changeItemShop()">Change</button>
+        </div>
+    </main>
+    <footer>Created by LimeGradient</footer>
+    <script src="websocket.js"></script>
+    <script>
+        window.onload = () => {
+            setTimeout(() => {
+                // check for admin pass cookie
+                let hashCookie;
+                document.cookie.split(";").forEach(cookie => {
+                    const parts = cookie.split('=')
+                    if (parts[0].trim() === "hash") {
+                        const value = decodeURIComponent(parts.slice(1).join('='))
+                        hashCookie = value
+                    }
+                })
+                const isAdminPacket = new Packet(4003, {
+                    "hash": hashCookie
+                })
+                sendData(isAdminPacket)
+
+                // populate item shop select
+                const getCosmeticsPacket = new Packet(2004, {})
+                sendData(getCosmeticsPacket)
+            }, 250)
+        }
+
+        function changeItemShop() {
+            const itemShopSelects = document.querySelectorAll("#item-select")
+            const items = []
+            itemShopSelects.forEach((select) => {
+                items.push(select.value)
+            })
+
+            let updateItemShopPacket = new Packet(3002, {
+                "items": items
+            })
+            sendData(updateItemShopPacket)
+        }
+
+        function addAdmin() {
+            const accountID = document.querySelector("#accountID").value
+            const password = document.querySelector("#password").value
+
+            const addAdminPacket = new Packet(4002, {
+                "accountID": accountID,
+                "password": password
+            })
+
+            sendData(addAdminPacket)
+        }
+    </script>
+</body>
+</html>

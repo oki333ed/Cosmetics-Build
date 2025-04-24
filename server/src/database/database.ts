@@ -1,7 +1,9 @@
 import * as sqlite3 from "sqlite3";
-import axios, {Axios} from "axios"
+import * as argon2 from "argon2"
 
+import axios, {Axios} from "axios"
 import {open, Database} from 'sqlite';
+
 import { User } from "../types/user";
 import { Cosmetic, FullCosmetic } from "../types/cosmetics";
 import { filterAllCosmetics, getActiveCosmetics } from "../utils";
@@ -152,4 +154,76 @@ export async function setCosmeticActive(accountID: number, cosmeticID: number) {
     }
 
     return res
+}
+
+export async function updateItemShop(items: number[]) {
+    for (let i = 0; i < items.length; i++) {
+        await db.run("UPDATE ItemShop SET cosmeticID = ? WHERE rowID = ?", items[i], i + 1)
+    }
+}
+
+export async function addAdmin(accountID: number, password: string) {
+    let packetRes: PacketResponse = {
+        code: 0,
+        message: ''
+    }
+
+    const hash = await argon2.hash(password)
+    const isAdmin = await db.get("SELECT * FROM Admins WHERE accountID = ?")
+    if (isAdmin !== undefined) {
+        packetRes.code = 400
+        packetRes.message = "User is already admin!"
+    } else {
+        await db.run("INSERT INTO Admins (accountID, password) VALUES (?, ?)", accountID, hash)
+        packetRes.code = 200
+        packetRes.message = "User successfully added!"
+    }
+
+    return packetRes
+}
+
+export async function checkAdmin(hash: string) {
+    let packetRes: PacketResponse = {
+        code: 0,
+        message: ''
+    }
+
+    const isAdmin = await db.get("SELECT * FROM Admins WHERE password = ?", hash)
+    if (isAdmin !== undefined) {
+        packetRes.code = 200
+        packetRes.message = isAdmin["password"]
+    } else {
+        packetRes.code = 403
+        packetRes.message = ""
+    }
+
+    return packetRes
+}
+
+export async function tryDashboardLogin(accountID: number, password: string) {
+    let packetRes: PacketResponse = {
+        code: 0,
+        message: ''
+    };
+
+    const isAdmin = await db.get("SELECT * FROM Admins WHERE accountID = ?", accountID);
+    if (isAdmin !== undefined) {
+        if (await argon2.verify(isAdmin["password"], password)) {
+            packetRes.code = 200
+            
+            let obj = {
+                "token": isAdmin["password"]
+            }
+            packetRes.message = JSON.stringify(obj)
+
+        } else {
+            packetRes.code = 403
+            packetRes.message = "Invalid username or password."
+        }
+    } else {
+        packetRes.code = 403
+        packetRes.message = "Invalid username or password."
+    }
+
+    return packetRes
 }

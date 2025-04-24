@@ -16,7 +16,13 @@ CREATE TABLE IF NOT EXISTS AccountCosmetics (
 );
 
 CREATE TABLE IF NOT EXISTS Admins (
-    accountID INTEGER PRIMARY KEY
+    accountID INTEGER PRIMARY KEY,
+    password TEXT
+);
+
+CREATE TABLE IF NOT EXISTS ItemShop (
+    rowID INTEGER PRIMARY KEY,
+    cosmeticID INTEGER
 );
 
 INSERT INTO Cosmetics (cosmeticID, cosmeticName, cosmeticAmount) VALUES 

@@ -3,12 +3,36 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cosmetics Dashboard</title>
+    <title>Login</title>
     <link rel="stylesheet" href="index.css">
+    <script src="types/packet.js"></script>
 </head>
 <body>
     <main>
-         
+        <h1>Cosmetics</h1>
+        <form>
+            <label for="accountID">Account ID: </label> <br>
+            <input type="text" id="accountID" name="accountID"> <br>
+            <br>
+            <label for="password">Password: </label> <br>
+            <input type="password" id="password" name="password"> <br> <br>
+        </form>
+        <button onclick="tryWebsocketLogin()">Login</button>
     </main>
+
+    <script src="websocket.js"></script>
+    <script>
+        function tryWebsocketLogin() {
+            const accountID = document.querySelector("#accountID").value
+            const password = document.querySelector("#password").value
+
+            const loginPacket = new Packet(4001, {
+                "accountID": accountID,
+                "password": password
+            })
+
+            sendData(loginPacket)
+        }
+    </script>
 </body>
 </html>
