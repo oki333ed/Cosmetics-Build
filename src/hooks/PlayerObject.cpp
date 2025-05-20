@@ -55,24 +55,17 @@ void CosmeticsPlayerObject::drawMask(Cosmetic mask) {
         return;
     }
 
-    CCSprite* spr;
-    auto regularPos = this->m_iconSprite->getScaledContentSize() + CCPoint{6.5f, 6.5f};
-    auto* regularMask = Build<CCSprite>::createSpriteName(fmt::format("{}.png"_spr, mask.getCosmeticID()).c_str())
-        .scale(0.5f)
+    CCNode* spr;
+    auto regularPos = this->m_iconSprite->getScaledContentSize() / 2;
+    auto* regularMask = Build(CosmeticManager::get()->loadMask(mask.getCosmeticID(), this->m_playerColor1, this->m_playerColor2, this->m_glowColor))
+        .scale(0.125f)
         .id(fmt::format("mask-{}", mask.getCosmeticID()))
         .parent(this->m_iconSprite)
+        .anchorPoint({0.5f, 0.5f})
         .store(spr)
-        .schedule([spr, rpos = regularPos](float dt) {
-            auto obj = typeinfo_cast<PlayerObject*>(spr->getParent()->getParent()->getParent());
-            spr->setVisible(obj && !obj->m_isDead && !obj->m_isHidden && !obj->m_isDart && !obj->m_isBall);
-
-            if (obj) {
-                if (!obj->m_isSwing) {
-                    spr->setPosition(rpos);
-                } else {
-                    spr->setPosition(rpos + CCPoint{5.f, 6.f});
-                }
-            }
+        .schedule([spr, rpos = regularPos, this](float dt) {
+            spr->setVisible(!this->m_isDead && !this->m_isHidden && !this->m_isDart && !this->m_isBall);  
+            spr->setPosition(rpos);
         })
         .pos(regularPos)
         .collect();

@@ -19,6 +19,7 @@ public:
     void setSelfUser(CosmeticsUser user) { this->selfUser = user; }
 
     void setDualCosmetics(ActiveCosmetics cosmetics, PlayerObject* p1, PlayerObject* p2);
+    cocos2d::CCNode* loadMask(int id, cocos2d::ccColor3B primaryColor, cocos2d::ccColor3B secondaryColor, cocos2d::ccColor3B glowColor);
 protected:
     CosmeticsUser selfUser;
     std::vector<Cosmetic> allCosmetics;

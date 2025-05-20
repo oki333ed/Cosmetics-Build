@@ -1,5 +1,5 @@
 {
-	"geode": "4.3.1",
+	"geode": "4.4.0",
 	"gd": {
 		"win": "2.2074",
 		"android": "2.2074",
@@ -30,7 +30,7 @@
 			"importance": "required"
 		},
 		"dankmeme.globed2": {
-			"version": ">=1.8.0-beta.2",
+			"version": ">=1.8.0",
 			"importance": "suggested"
 		}
 	}
