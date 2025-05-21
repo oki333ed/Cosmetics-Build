@@ -50,7 +50,7 @@ void CosmeticsPlayerObject::drawMask(Cosmetic mask) {
     CCNode* spr;;
     CCNode* regularMask; 
     Build(CosmeticManager::get()->loadMask(mask.getCosmeticID(), this->m_playerColor1, this->m_playerColor2, this->m_glowColor))
-        .scale(0.135f)
+        .scale(0.75f)
         .id(fmt::format("mask-{}", mask.getCosmeticID()))
         .parent(this->m_mainLayer)
         .anchorPoint({0.5f, 0.5f})
@@ -63,6 +63,6 @@ void CosmeticsPlayerObject::drawMask(Cosmetic mask) {
         .intoNewSibling(CCSprite::createWithSpriteFrameName(fmt::format("{}_outline.png"_spr, mask.getCosmeticID()).c_str()))
             .color(this->m_glowColor)
             .id("mask_glow")
-            .scale(0.135f)
+            .scale(0.75f)
             .zOrder(0);
 }

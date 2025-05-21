@@ -32,9 +32,9 @@ bool CosmeticSelectPopup::setup(CosmeticsUser& user) {
 SimplePlayer* CosmeticSelectPopup::drawPlayer(IconType type, CCNode* baseNode, CosmeticsUser& user) {
     auto gm = GameManager::sharedState();
 
-    auto firstColor = gm->colorForIdx(gm->getPlayerColor());
-    auto secondColor = gm->colorForIdx(gm->getPlayerColor2());
-    auto glowColor = gm->colorForIdx(gm->getPlayerGlowColor());
+    m_firstColor = gm->colorForIdx(gm->getPlayerColor());
+    m_secondColor = gm->colorForIdx(gm->getPlayerColor2());
+    m_glowColor = gm->colorForIdx(gm->getPlayerGlowColor());
 
     CCPoint offset{50.f, 0.f};
 
@@ -42,9 +42,9 @@ SimplePlayer* CosmeticSelectPopup::drawPlayer(IconType type, CCNode* baseNode, C
     baseNode->addChildAtPosition(player, Anchor::Left, offset);
     player->updatePlayerFrame(getPlayerIconIndex(type), type);
 
-    player->setColors(firstColor, secondColor);
-    player->setGlowOutline(glowColor);
-    player->enableCustomGlowColor(glowColor);
+    player->setColors(m_firstColor, m_secondColor);
+    player->setGlowOutline(m_glowColor);
+    player->enableCustomGlowColor(m_glowColor);
     if (!gm->getPlayerGlow()) player->disableGlowOutline();
 
     if (type == IconType::Ship || type == IconType::Ufo || type == IconType::Jetpack) {
@@ -52,9 +52,9 @@ SimplePlayer* CosmeticSelectPopup::drawPlayer(IconType type, CCNode* baseNode, C
         cube->setZOrder(-1);
         baseNode->addChildAtPosition(cube, Anchor::Left, offset);
         cube->updatePlayerFrame(getPlayerIconIndex(type), type);
-        cube->setColors(firstColor, secondColor);
-        cube->setGlowOutline(glowColor);
-        cube->enableCustomGlowColor(glowColor);
+        cube->setColors(m_firstColor, m_secondColor);
+        cube->setGlowOutline(m_glowColor);
+        cube->enableCustomGlowColor(m_glowColor);
         if (!gm->getPlayerGlow()) cube->disableGlowOutline();
         CCPoint posCube, posVehicle;
 		float scaleCube;
@@ -124,10 +124,10 @@ void CosmeticSelectPopup::drawMask(Cosmetic mask, SimplePlayer* player) {
         return;
     }
 
-    CCSprite* spr;
+    CCNode* spr;
     auto regularPos = player->m_detailSprite->getScaledContentSize() + CCPoint{6.5f, 6.5f};
-    auto* regularMask = Build<CCSprite>::createSpriteName(fmt::format("{}.png"_spr, mask.getCosmeticID()).c_str())
-        .scale(0.5f)
+    auto* regularMask = Build(CosmeticManager::get()->loadMask(mask.getCosmeticID(), m_firstColor, m_secondColor, m_glowColor))
+        .scale(0.75f)
         .id(fmt::format("mask-{}", mask.getCosmeticID()))
         .parent(player->m_firstLayer)
         .store(spr)

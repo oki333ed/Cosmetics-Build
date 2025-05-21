@@ -15,6 +15,10 @@ protected:
     void drawHat(Cosmetic hat, SimplePlayer* player);
     void drawMask(Cosmetic mask, SimplePlayer* player);
 
+    cocos2d::ccColor3B m_firstColor;
+    cocos2d::ccColor3B m_secondColor;
+    cocos2d::ccColor3B m_glowColor;
+
 public:
     static CosmeticSelectPopup* create(CosmeticsUser& user);
 };
