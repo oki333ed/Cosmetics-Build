@@ -34,17 +34,9 @@ void CosmeticsPlayerObject::drawHat(Cosmetic hat) {
         .id(fmt::format("hat-{}", hat.getCosmeticID()))
         .parent(this->m_iconSprite)
         .store(spr)
-        .schedule([spr, rpos = regularPos](float dt) {
-            auto obj = typeinfo_cast<PlayerObject*>(spr->getParent()->getParent()->getParent());
-            spr->setVisible(obj && !obj->m_isDead && !obj->m_isHidden && !obj->m_isDart && !obj->m_isBall);
-
-            if (obj) {
-                if (!obj->m_isSwing) {
-                    spr->setPosition(rpos);
-                } else {
-                    spr->setPosition(rpos + CCPoint{5.f, 6.f});
-                }
-            }
+        .schedule([spr, rpos = regularPos, this](float dt) {
+            spr->setVisible(!this->m_isDead && !this->m_isHidden && !this->m_isDart && !this->m_isBall);  
+            spr->setPosition(rpos);
         })
         .pos(regularPos)
         .collect();
@@ -55,18 +47,22 @@ void CosmeticsPlayerObject::drawMask(Cosmetic mask) {
         return;
     }
 
-    CCNode* spr;
-    auto regularPos = this->m_iconSprite->getScaledContentSize() / 2;
-    auto* regularMask = Build(CosmeticManager::get()->loadMask(mask.getCosmeticID(), this->m_playerColor1, this->m_playerColor2, this->m_glowColor))
-        .scale(0.125f)
+    CCNode* spr;;
+    CCNode* regularMask; 
+    Build(CosmeticManager::get()->loadMask(mask.getCosmeticID(), this->m_playerColor1, this->m_playerColor2, this->m_glowColor))
+        .scale(0.135f)
         .id(fmt::format("mask-{}", mask.getCosmeticID()))
-        .parent(this->m_iconSprite)
+        .parent(this->m_mainLayer)
         .anchorPoint({0.5f, 0.5f})
+        .zOrder(1)
         .store(spr)
-        .schedule([spr, rpos = regularPos, this](float dt) {
+        .schedule([spr, this](float dt) {
             spr->setVisible(!this->m_isDead && !this->m_isHidden && !this->m_isDart && !this->m_isBall);  
-            spr->setPosition(rpos);
         })
-        .pos(regularPos)
-        .collect();
+        .store(regularMask)
+        .intoNewSibling(CCSprite::createWithSpriteFrameName(fmt::format("{}_outline.png"_spr, mask.getCosmeticID()).c_str()))
+            .color(this->m_glowColor)
+            .id("mask_glow")
+            .scale(0.135f)
+            .zOrder(0);
 }

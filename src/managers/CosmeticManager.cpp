@@ -28,10 +28,7 @@ CCNode* CosmeticManager::loadMask(int id, ccColor3B primaryColor, ccColor3B seco
             .id("mask_first")
         .intoNewSibling(CCSprite::createWithSpriteFrameName(fmt::format("{}_second.png"_spr, id).c_str()))
             .color(secondaryColor)
-            .id("mask_second")
-        .intoNewSibling(CCSprite::createWithSpriteFrameName(fmt::format("{}_outline.png"_spr, id).c_str()))
-            .color(glowColor)
-            .id("mask_glow");
+            .id("mask_second");
     
     return node;
 }
