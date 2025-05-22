@@ -4,6 +4,14 @@
 
 #include <matjson.hpp>
 
+enum CosmeticType {
+    Hat,
+    Mask,
+    Object,
+    ParticleEffect,
+    None
+};
+
 class Cosmetic {
 public:
     Cosmetic() {}
@@ -33,6 +41,20 @@ public:
         return false;
     }
 
+    CosmeticType typeFromID() {
+        if (this->cosmeticID > 1000 && this->cosmeticID < 2000) {
+            return CosmeticType::Hat;
+        } else if (this->cosmeticID > 2000 && this->cosmeticID < 3000) {
+            return CosmeticType::Mask;
+        } else if (this->cosmeticID > 3000 && this->cosmeticID < 4000) {
+            return CosmeticType::Object;
+        } else if (this->cosmeticID > 4000 && this->cosmeticID < 5000) {
+            return CosmeticType::ParticleEffect;
+        }
+
+        return CosmeticType::None;
+    }
+
     void setCosmeticID(int cosID) {this->cosmeticID = cosID;}
     void setCosmeticName(std::string name) {this->cosmeticName = name;}
     void setCosmeticAmount(int amount) {this->cosmeticAmount = amount;}
@@ -41,6 +63,7 @@ protected:
     std::string cosmeticName;
     int cosmeticAmount = 0;
     bool isActive = false;
+    CosmeticType type;
 };
 
 class ActiveCosmetics {

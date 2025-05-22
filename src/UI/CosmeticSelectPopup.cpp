@@ -13,10 +13,6 @@ bool CosmeticSelectPopup::setup(CosmeticsUser& user) {
 
     auto player = drawPlayer(IconType::Cube, m_mainLayer, user);
 
-    auto shadow = CCSprite::createWithSpriteFrameName("shopKeeper2_eye_01_001.png");
-    shadow->setRotationX(80.f);
-    player->addChildAtPosition(shadow, Anchor::Bottom);
-
     NetworkManager::get()->send(RequestAllCosmeticsPacket::create());
 
     auto eventDispatcher = Cosmetics::EventDispatcher::get();
@@ -94,12 +90,25 @@ void CosmeticSelectPopup::drawAllCosmetics(std::vector<Cosmetic> cosmetics) {
 
         m_mainLayer->addChildAtPosition(btnMenu, Anchor::Right, {-50.f, 0.f});
     
-        auto cosmeticIcon = Build<CCSprite>::createSpriteName(fmt::format("{}.png"_spr, cosmetic.getCosmeticID()).c_str())
-            .scale(0.5f)
-            .parent(btnMenu)
-            .collect();
-        
-        btnMenu->updateLayout();
+        CCNode* cosmeticIcon;
+        switch (cosmetic.typeFromID()) {
+            case Hat:
+                break;
+            case Mask:
+                cosmeticIcon = Build(CosmeticManager::get()->loadMask(cosmetic.getCosmeticID(), m_firstColor, m_secondColor, m_glowColor))
+                    .scale(0.5f)
+                    .parent(btnMenu)
+                    .collect();
+                
+                btnMenu->updateLayout();
+                break;
+            case Object:
+                break;
+            case ParticleEffect:
+                break;
+            case None:
+                break;
+        }
     }
 }
 
