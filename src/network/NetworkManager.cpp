@@ -2,6 +2,7 @@
 
 #include "packets/Server.hpp"
 
+#include <argon/argon.hpp>
 #include <Geode/utils/web.hpp>
 
 using namespace geode::prelude;
@@ -13,6 +14,7 @@ void NetworkManager::init() {
     this->webSocket.setOnMessageCallback([this](const ix::WebSocketMessagePtr& msg) {
         switch (msg->type) {
             case ix::WebSocketMessageType::Open: {
+                this->login();
                 log::info("Connection established with server");
                 break;
             }
@@ -24,7 +26,7 @@ void NetworkManager::init() {
                 break;
             }
             case ix::WebSocketMessageType::Error: {
-                log::error("Error connecting to server: {}", msg->errorInfo.reason);
+                log::error("Error connecting to server: {}", msg->errorInfo.http_status);
                 break;
             }
         }
@@ -72,4 +74,24 @@ bool NetworkManager::connected() {
     }
 
     return false;
+}
+
+void NetworkManager::login() {
+    auto res = argon::startAuth([this](Result<std::string> res) {
+        if (!res) {
+            log::warn("Argon Auth failed: {}", res.unwrapErr());
+            return;
+        }
+
+        auto token = std::move(res).unwrap();
+        this->send(CreateUserPacket::create(GJAccountManager::get()->m_accountID, token));
+    }, [](argon::AuthProgress progress) {
+        log::info("Auth progress: {}", argon::authProgressToString(progress));
+    });
+
+    if (!res) {
+        log::warn("Failed to start auth attempt: {}", res.unwrapErr());
+    } else {
+        res.unwrap();
+    }
 }

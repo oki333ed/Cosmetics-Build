@@ -36,7 +36,7 @@ bool HookedPlayLayer::init(GJGameLevel* level, bool useReplay, bool dontCreateOb
     }
 
     auto onPlayerLeave = globed::callbacks::onPlayerLeave([](int accountID, PlayerObject* p1, PlayerObject* p2) {
-        log::info("left account id: {}", accountID);
+        //log::info("left account id: {}", accountID);
     });
 
     if (onPlayerLeave) {

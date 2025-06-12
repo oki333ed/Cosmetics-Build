@@ -11,41 +11,15 @@
 
 using namespace geode::prelude;
 
-$on_mod(Loaded) {
-    NetworkManager* networkManager = NetworkManager::get();
-    networkManager->init();
-}
-
 $on_game(Loaded) {
 	NetworkManager* networkManager = NetworkManager::get();
-
-	if (networkManager->connected()) {
-		// auth
-		auto res = argon::startAuth([networkManager](Result<std::string> res) {
-			if (!res) {
-				log::warn("Argon Auth failed: {}", res.unwrapErr());
-				return;
-			}
-
-			auto token = std::move(res).unwrap();
-			networkManager->send(CreateUserPacket::create(GJAccountManager::get()->m_accountID, token));
-		}, [](argon::AuthProgress progress) {
-			log::info("Auth progress: {}", argon::authProgressToString(progress));
-		});
-
-		if (!res) {
-			log::warn("Failed to start auth attempt: {}", res.unwrapErr());
-		} else {
-			res.unwrap();
-		}
-	}
+    networkManager->init();
 }
 
 class $modify(MenuLayer) {
 	bool init() {
 		MenuLayer::init();
 		
-
 		return true;
 	}
 };

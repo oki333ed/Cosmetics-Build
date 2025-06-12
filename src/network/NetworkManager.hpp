@@ -43,7 +43,7 @@ public:
 
     bool connected();
 
-    
+    void login();
 protected:
     bool isServerOnline();
 
