@@ -27,19 +27,24 @@ void CosmeticsPlayerObject::drawHat(Cosmetic hat) {
         return;
     }
 
-    CCSprite* spr;
-    auto regularPos = this->m_iconSprite->getScaledContentSize() + CCPoint{-3.f, 2.f};
-    auto* regularHat = Build<CCSprite>::createSpriteName(fmt::format("{}.png"_spr, hat.getCosmeticID()).c_str())
-        .scale(0.5f)
+    CCNode* spr;
+    CCNode* regularHat;
+    Build(CosmeticManager::get()->loadHat(hat.getCosmeticID(), this->m_playerColor1, this->m_playerColor2, this->m_glowColor))
+        .scale(0.75f)
         .id(fmt::format("hat-{}", hat.getCosmeticID()))
-        .parent(this->m_iconSprite)
+        .parent(this->m_mainLayer)
+        .anchorPoint({0.5f, 0.5f})
+        .zOrder(1)
         .store(spr)
-        .schedule([spr, rpos = regularPos, this](float dt) {
+        .schedule([spr, this](float dt) {
             spr->setVisible(!this->m_isDead && !this->m_isHidden && !this->m_isDart && !this->m_isBall);  
-            spr->setPosition(rpos);
         })
-        .pos(regularPos)
-        .collect();
+        .store(regularHat)
+        .intoNewSibling(CCSprite::createWithSpriteFrameName(fmt::format("{}_outline.png"_spr, hat.getCosmeticID()).c_str()))
+            .color(this->m_glowColor)
+            .id("hat_glow")
+            .scale(0.75f)
+            .zOrder(0);
 }
 
 void CosmeticsPlayerObject::drawMask(Cosmetic mask) {
@@ -47,7 +52,7 @@ void CosmeticsPlayerObject::drawMask(Cosmetic mask) {
         return;
     }
 
-    CCNode* spr;;
+    CCNode* spr;
     CCNode* regularMask; 
     Build(CosmeticManager::get()->loadMask(mask.getCosmeticID(), this->m_playerColor1, this->m_playerColor2, this->m_glowColor))
         .scale(0.75f)
