@@ -28,7 +28,7 @@ endif()
 
 add_subdirectory($ENV{GEODE_SDK} ${CMAKE_CURRENT_BINARY_DIR}/geode)
 
-CPMAddPackage("gh:camila314/uibuilder#main")
+CPMAddPackage("gh:dankmeme01/uibuilder#main")
 CPMAddPackage("gh:LimeGradient/argon#main")
 
 if (CMAKE_SYSTEM_NAME STREQUAL "Windows")
