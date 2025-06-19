@@ -32,6 +32,14 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Update LLVM (Windows)
+        if: matrix.config.id == 'win'
+        shell: bash
+        run: |
+          curl -L https://github.com/llvm/llvm-project/releases/download/llvmorg-19.1.7/LLVM-19.1.7-win64.exe -o llvm-inst.exe
+          7z x llvm-inst.exe -ollvm bin/clang.exe bin/clang++.exe bin/lld-link.exe bin/llvm-rc.exe bin/*.dll lib/clang/*/include/*
+          echo "$GITHUB_WORKSPACE/llvm/bin" >> $GITHUB_PATH
+
       - name: Build the mod
         uses: geode-sdk/build-geode-mod@main
         with:
