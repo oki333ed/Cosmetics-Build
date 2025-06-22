@@ -31,7 +31,7 @@ void CosmeticsPlayerObject::drawHat(Cosmetic hat) {
     CCNode* regularHat;
     Build(CosmeticManager::get()->loadHat(hat.getCosmeticID(), this->m_playerColor1, this->m_playerColor2, this->m_glowColor))
         .scale(0.75f)
-        .id(fmt::format("hat-{}", hat.getCosmeticID()))
+        .id(fmt::format("hat-{}"_spr, hat.getCosmeticID()))
         .parent(this->m_mainLayer)
         .anchorPoint({0.5f, 0.5f})
         .zOrder(1)
@@ -56,7 +56,7 @@ void CosmeticsPlayerObject::drawMask(Cosmetic mask) {
     CCNode* regularMask; 
     Build(CosmeticManager::get()->loadMask(mask.getCosmeticID(), this->m_playerColor1, this->m_playerColor2, this->m_glowColor))
         .scale(0.75f)
-        .id(fmt::format("mask-{}", mask.getCosmeticID()))
+        .id(fmt::format("mask-{}"_spr, mask.getCosmeticID()))
         .parent(this->m_mainLayer)
         .anchorPoint({0.5f, 0.5f})
         .zOrder(1)
