@@ -67,7 +67,7 @@ void CosmeticsPlayerObject::drawMask(Cosmetic mask) {
         .store(regularMask)
         .intoNewSibling(CCSprite::createWithSpriteFrameName(fmt::format("{}_outline.png"_spr, mask.getCosmeticID()).c_str()))
             .color(this->m_glowColor)
-            .id("mask_glow")
+            .id("mask_glow"_spr)
             .scale(0.75f)
             .zOrder(0);
 }
