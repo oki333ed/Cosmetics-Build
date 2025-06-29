@@ -1,6 +1,7 @@
 #pragma once
 
-#include "network/packets/Packet.hpp"
+#include <network/packets/Packet.hpp>
+#include <types/Cosmetic.hpp>
 
 class CreateUserPacket : public Packet<CreateUserPacket, 1001> {
 public:
@@ -26,12 +27,14 @@ protected:
 
 class UpdateUserPacket : public Packet<UpdateUserPacket, 1002> {
 public:
-    UpdateUserPacket(int accountID, int creditsAmount) : 
+    UpdateUserPacket(int accountID, int creditsAmount, ActiveCosmetics activeCosmetics, AccountCosmetics accountCosmetics) : 
         accountID(accountID),
-        creditsAmount(creditsAmount) {}
+        creditsAmount(creditsAmount),
+        activeCosmetics(activeCosmetics),
+        accountCosmetics(accountCosmetics) {}
     
-    static UpdateUserPacket create(int accountID, int creditsAmount) {
-        return UpdateUserPacket(accountID, creditsAmount);
+    static UpdateUserPacket create(int accountID, int creditsAmount, ActiveCosmetics activeCosmetics, AccountCosmetics accountCosmetics) {
+        return UpdateUserPacket(accountID, creditsAmount, activeCosmetics, accountCosmetics);
     }
 
     friend class Packet;
@@ -40,12 +43,16 @@ protected:
     matjson::Value encodeData() const {
         return matjson::makeObject({
             {"accountID", accountID},
-            {"creditsAmount", creditsAmount}
+            {"creditsAmount", creditsAmount},
+            {"activeCosmetics", activeCosmetics.createObject()},
+            {"accountCosmetics", accountCosmetics.createObject()}
         });
     }
 
     int accountID;
     int creditsAmount;
+    ActiveCosmetics activeCosmetics;
+    AccountCosmetics accountCosmetics;
 };
 
 class RequestUserPacket : public Packet<RequestUserPacket, 1003> {

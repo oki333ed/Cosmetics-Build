@@ -78,5 +78,6 @@ public:
         ));
 
         CosmeticManager::get()->setSelfUser(user);
+        geode::log::info("new credits amount: {}", user.getCreditsAmount());
     }
 };

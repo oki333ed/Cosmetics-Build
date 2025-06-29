@@ -1,5 +1,8 @@
 #include "CosmeticManager.hpp"
-#include "hooks/PlayerObject.hpp"
+
+#include <hooks/PlayerObject.hpp>
+#include <network/NetworkManager.hpp>
+#include <network/packets/Client.hpp>
 
 #include <UIBuilder.hpp>
 
@@ -12,6 +15,24 @@ ActiveCosmetics CosmeticManager::activeCosmeticsFromJSON(matjson::Value value) {
         (!value["object"].isNull()) ? Cosmetic(value["object"]) : Cosmetic(),
         (!value["particle"].isNull()) ? Cosmetic(value["particle"]) : Cosmetic()
     );
+}
+
+void CosmeticManager::updateSelfUser(CosmeticsUser user) {
+    auto nm = NetworkManager::get();
+
+    nm->send(
+        UpdateUserPacket::create(
+            user.getAccountID(), user.getCreditsAmount(), user.getActiveCosmetics(), user.getAccountCosmetics()
+        )
+    );
+}
+
+void CosmeticManager::updateActiveCosmetics(CosmeticsUser user) {
+    for (auto cosmetic : user.getActiveCosmetics().getAllCosmetics()) {
+        NetworkManager::get()->send(
+            SetCosmeticActivePacket::create(user.getAccountID(), cosmetic.getCosmeticID())
+        );
+    }
 }
 
 void CosmeticManager::setDualCosmetics(ActiveCosmetics cosmetics, PlayerObject* p1, PlayerObject* p2) {

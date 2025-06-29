@@ -17,6 +17,8 @@ public:
 
     CosmeticsUser getSelfUser() { return this->selfUser; }
     void setSelfUser(CosmeticsUser user) { this->selfUser = user; }
+    void updateSelfUser(CosmeticsUser user);
+    void updateActiveCosmetics(CosmeticsUser user);
 
     void setDualCosmetics(ActiveCosmetics cosmetics, PlayerObject* p1, PlayerObject* p2);
     cocos2d::CCNode* loadHat(int id, cocos2d::ccColor3B primaryColor, cocos2d::ccColor3B secondaryColor, cocos2d::ccColor3B glowColor);
