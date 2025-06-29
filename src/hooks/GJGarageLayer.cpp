@@ -2,6 +2,7 @@
 
 #include <managers/CosmeticManager.hpp>
 #include <UIBuilder.hpp>
+#include <UI/cosmeticLayer.hpp>
 
 using namespace geode::prelude;
 
@@ -14,7 +15,8 @@ bool HookedGJGarageLayer::init() {
         .scale(0.75f)
         .intoMenuItem([this]() {
             CosmeticsUser user = CosmeticManager::get()->getSelfUser();
-            CosmeticSelectPopup::create(user)->show();
+            //CosmeticSelectPopup::create(user)->show();
+            CCDirector::sharedDirector()->pushScene(CosmeticLayer::scene());
         })
         .parent(shardsMenu);
 
