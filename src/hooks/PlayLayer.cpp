@@ -20,31 +20,22 @@ bool HookedPlayLayer::init(GJGameLevel* level, bool useReplay, bool dontCreateOb
     auto selfCosmetics = cm->getSelfUser().getActiveCosmetics();
     cm->setDualCosmetics(selfCosmetics, gjbgl->m_player1, gjbgl->m_player2);
 
-    auto onPlayerJoin = globed::callbacks::onPlayerJoin([cm](int accountID, PlayerObject* p1, PlayerObject* p2) {
-        auto cosmeticsPacket = RequestUserCosmeticsPacket::create(accountID);
-        NetworkManager::get()->send(cosmeticsPacket);
+    if (Loader::get()->getLoadedMod("dankmeme.globed2")) {
+        auto onPlayerJoin = globed::callbacks::onPlayerJoin([cm](int accountID, PlayerObject* p1, PlayerObject* p2) {
+            auto cosmeticsPacket = RequestUserCosmeticsPacket::create(accountID);
+            NetworkManager::get()->send(cosmeticsPacket);
 
-        Cosmetics::EventDispatcher::get()->registerListener(new Cosmetics::Event<ActiveCosmetics>("UserCosmeticsPacket", [cm, p1, p2](ActiveCosmetics activeCosmetics) {
-            cm->setDualCosmetics(activeCosmetics, p1, p2);
-        }));
-    });
+            Cosmetics::EventDispatcher::get()->registerListener(new Cosmetics::Event<ActiveCosmetics>("UserCosmeticsPacket", [cm, p1, p2](ActiveCosmetics activeCosmetics) {
+                cm->setDualCosmetics(activeCosmetics, p1, p2);
+            }));
+        });
 
-    if (onPlayerJoin) {
-        onPlayerJoin.unwrap();
-    } else {
-        log::info("onPlayerJoin Error: {}", onPlayerJoin.unwrapErr());
+        if (onPlayerJoin) {
+            onPlayerJoin.unwrap();
+        } else {
+            log::info("onPlayerJoin Error: {}", onPlayerJoin.unwrapErr());
+        }
     }
-
-    auto onPlayerLeave = globed::callbacks::onPlayerLeave([](int accountID, PlayerObject* p1, PlayerObject* p2) {
-        //log::info("left account id: {}", accountID);
-    });
-
-    if (onPlayerLeave) {
-        onPlayerLeave.unwrap();
-    } else {
-        log::info("onPlayerLeave Error: {}", onPlayerLeave.unwrapErr());
-    }
-
     return true;
 }
 

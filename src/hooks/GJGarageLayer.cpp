@@ -16,7 +16,7 @@ bool HookedGJGarageLayer::init() {
         .intoMenuItem([this]() {
             CosmeticsUser user = CosmeticManager::get()->getSelfUser();
             //CosmeticSelectPopup::create(user)->show();
-            CCDirector::sharedDirector()->pushScene(CosmeticLayer::scene());
+            CCDirector::sharedDirector()->pushScene(CCTransitionFade::create(0.5f, CosmeticLayer::scene()));
         })
         .parent(shardsMenu);
 

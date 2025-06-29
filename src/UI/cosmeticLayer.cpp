@@ -1,4 +1,6 @@
-#include "cosmeticLayer.hpp"
+#include "CosmeticLayer.hpp"
+
+using namespace geode::prelude;
 
 bool CosmeticLayer::init() {
     if(!CCLayer::init()) return false;

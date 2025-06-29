@@ -3,7 +3,6 @@
 #include <Geode/Geode.hpp>
 #include <UIBuilder.hpp>
 
-#include <dankmeme.globed2/include/player.hpp>
 #include <managers/CosmeticManager.hpp>
 #include <network/NetworkManager.hpp>
 #include <network/packets/Client.hpp>
