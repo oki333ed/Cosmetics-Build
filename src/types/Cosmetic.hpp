@@ -12,6 +12,13 @@ enum CosmeticType {
     None
 };
 
+enum CosmeticRarity {
+    Common,
+    Epic,
+    Legendary,
+    Mythic
+};
+
 class Cosmetic {
 public:
     Cosmetic() {}
@@ -72,6 +79,34 @@ protected:
     int cosmeticAmount = 0;
     bool isActive = false;
     CosmeticType type;
+};
+
+class FullCosmetic : public Cosmetic {
+public:
+    FullCosmetic(
+        int cosmeticID, std::string cosmeticName, std::string cosmeticDescription, int cosmeticAmount, CosmeticRarity cosmeticRarity, int isActive
+    ) : Cosmetic(cosmeticID, cosmeticName, cosmeticAmount, isActive), cosmeticDescription(cosmeticDescription), cosmeticRarity(cosmeticRarity) {}
+
+    FullCosmetic(matjson::Value value) {
+        this->cosmeticID = value["cosmeticID"].asInt().unwrap();
+        this->cosmeticName = value["cosmeticName"].asString().unwrap();
+        this->cosmeticDescription = value["cosmeticDescription"].asString().unwrap();
+        this->cosmeticAmount = value["cosmeticAmount"].asInt().unwrapOr(0);
+        this->cosmeticRarity = (CosmeticRarity)value["cosmeticRarity"].asInt().unwrap();
+        this->isActive = (value["isActive"].asInt().unwrapOr(0) == 0) ? false : true;
+    }
+
+    std::string getCosmeticDescription() {
+        return cosmeticDescription;
+    }
+
+    CosmeticRarity getCosmeticRarity() {
+        return cosmeticRarity;
+    }
+    
+protected:
+    std::string cosmeticDescription;
+    CosmeticRarity cosmeticRarity;
 };
 
 class ActiveCosmetics {

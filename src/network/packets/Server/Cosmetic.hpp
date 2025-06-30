@@ -37,9 +37,9 @@ public:
     AllCosmeticsPacket() {}
 
     void handlePacket(matjson::Value& packetData) {
-        std::vector<Cosmetic> cosmetics;
+        std::vector<FullCosmetic> cosmetics;
         for (auto cosmetic : packetData.asArray().unwrap()) {
-            cosmetics.push_back(Cosmetic(cosmetic));
+            cosmetics.push_back(FullCosmetic(cosmetic));
         }
 
         Cosmetics::EventDispatcher::get()->dispatch("AllCosmeticsPacket", cosmetics);

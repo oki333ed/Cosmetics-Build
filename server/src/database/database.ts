@@ -120,7 +120,9 @@ export async function getAllCosmetics() {
         let newCos: FullCosmetic = {
             cosmeticID: cosmetic["cosmeticID"],
             cosmeticName: cosmetic["cosmeticName"],
+            cosmeticDescription: cosmetic["cosmeticDescription"],
             cosmeticAmount: cosmetic["cosmeticAmount"],
+            cosmeticRarity: cosmetic["cosmeticRarity"],
             isActive: 0
         }
         allCosmetics.push(newCos)

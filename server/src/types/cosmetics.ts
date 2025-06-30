@@ -4,10 +4,19 @@ export type Cosmetic = {
     isActive: number
 }
 
+export enum CosmeticRarity {
+    COMMON = 0,
+    EPIC,
+    LEGENDARY,
+    MYTHIC
+}
+
 export type FullCosmetic = {
     cosmeticID: number
     cosmeticName: string
+    cosmeticDescription: string
     cosmeticAmount: number
+    cosmeticRarity: CosmeticRarity
     isActive: number
 }
 

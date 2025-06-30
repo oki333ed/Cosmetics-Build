@@ -1,6 +1,12 @@
 #include "CosmeticLayer.hpp"
 
+#include <events/EventDispatcher.hpp>
+#include <network/NetworkManager.hpp>
+#include <network/packets/Client.hpp>
+#include <types/Cosmetic.hpp>
+
 using namespace geode::prelude;
+using namespace Cosmetics;
 
 bool CosmeticLayer::init() {
     if(!CCLayer::init()) return false;
@@ -131,6 +137,15 @@ bool CosmeticLayer::init() {
 
     cosmeticMenu->getChildByID("content-layer")->updateLayout();
     cosmeticMenu->scrollToTop();
+
+    auto nm = NetworkManager::get();
+    nm->send(RequestAllCosmeticsPacket::create());
+
+    EventDispatcher::get()->registerListener(new Cosmetics::Event<std::vector<FullCosmetic>>("AllCosmeticsPacket", [](std::vector<FullCosmetic> cosmetics) {
+        for (auto cosmetic : cosmetics) {
+            log::info("cosmetic: {} - {}", cosmetic.getCosmeticID(), (int)cosmetic.getCosmeticRarity());
+        }
+    }));
 
     return true;
 }

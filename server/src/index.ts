@@ -11,8 +11,6 @@ const port = 8787;
 
 app.use("/api", apiRouter);
 
-app.use("/dashboard", express.static(path.join(__dirname, "webui")))
-
 database.init()
 
 app.listen(port, () => {
