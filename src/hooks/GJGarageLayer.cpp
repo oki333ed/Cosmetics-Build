@@ -2,7 +2,7 @@
 
 #include <managers/CosmeticManager.hpp>
 #include <UIBuilder.hpp>
-#include <UI/cosmeticLayer.hpp>
+#include <UI/CosmeticLayer.hpp>
 
 using namespace geode::prelude;
 
