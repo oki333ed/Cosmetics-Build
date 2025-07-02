@@ -29,5 +29,6 @@ INSERT INTO Cosmetics (cosmeticID, cosmeticName, cosmeticDescription, cosmeticAm
     (1004, 'Little Boat', 'Georgie used to have one of these, now you do!', 1000, 0),
     (2001, 'Freddy Fazbear', 'The animatronics here get a little quirky at night...', 1000, 0),
     (2002, 'Hearts', 'Valentines Day came early!', 5000, 1),
+    (2003, 'Knife', 'Its like Friday the 13th all over again!', 1000, 0),
     (3001, 'Test Object', 'test object', 1000, 0),
     (4001, 'Test Particle Effect', 'test particles', 1000, 0);

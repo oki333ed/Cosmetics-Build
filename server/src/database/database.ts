@@ -58,7 +58,7 @@ export async function createUser(accountID: number, token: string) {
         }
     })
 
-    console.log(packetRes)
+    console.log(`User ${accountID} has just logged in`)
     return packetRes;
 }
 

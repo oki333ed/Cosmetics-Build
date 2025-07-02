@@ -1,9 +1,12 @@
 #include "CosmeticLayer.hpp"
 
 #include <events/EventDispatcher.hpp>
+#include <managers/CosmeticManager.hpp>
 #include <network/NetworkManager.hpp>
 #include <network/packets/Client.hpp>
 #include <types/Cosmetic.hpp>
+
+#include <UIBuilder.hpp>
 
 using namespace geode::prelude;
 using namespace Cosmetics;
@@ -103,49 +106,73 @@ bool CosmeticLayer::init() {
     m_categoryMenu->addChild(category, 5);
     m_categoryMenu->updateLayout();
 
-    auto cosmeticMenu = ScrollLayer::create({winSize.width / 2, 230}, true, true);
-    cosmeticMenu->getChildByID("content-layer")->setLayout(AxisLayout::create()->setGap(5)->setGrowCrossAxis(true));
+    auto cosmeticMenu = ScrollLayer::create({winSize.width / 2 - 4, 220}, true, true);
+    cosmeticMenu->m_contentLayer->setLayout(AxisLayout::create()->setGap(5)->setGrowCrossAxis(true)->setAxisReverse(false));
     cosmeticMenu->setAnchorPoint({0.5, 1});
-    cosmeticMenu->setPosition({winSize.width / 4 - 120.f, 10.f});
+    cosmeticMenu->setPosition({winSize.width / 4 - 119.f, 15.f});
     addChild(cosmeticMenu, 4);
 
-    // buttons test
-    for (int i = 0; i < 50; ++i) {
-        auto spr = CCLayer::create();
-        spr->setContentSize({50, 50});
-        cosmeticMenu->getChildByID("content-layer")->addChild(spr, 3);
-
-        auto test = CCScale9Sprite::create("GJ_square07.png");
-        test->setContentSize({100, 100});
-        test->setScale(0.5f);
-        test->setPosition({spr->getContentWidth() / 2, spr->getContentHeight() / 2});
-        spr->addChild(test, 4);
-
-        auto rarityColor = CCLayerColor::create({ 0, 255, 255, 255 });
-        rarityColor->setContentSize({47, 2});
-        rarityColor->setPosition({1.5f, 1});
-        spr->addChild(rarityColor, 3);
-
-        auto rarityGradient = CCLayerGradient::create(
-            ccc4(0, 50, 50, 200), ccc4(0, 0, 0, 0)
-        );
-        rarityGradient->setContentSize({47, 47});
-        rarityGradient->setPosition({1.5f, 1.5f});
-        rarityGradient->setVector({0, 1});
-        spr->addChild(rarityGradient, 2);
-    }
-
-    cosmeticMenu->getChildByID("content-layer")->updateLayout();
-    cosmeticMenu->scrollToTop();
-
     auto nm = NetworkManager::get();
+    auto cm = CosmeticManager::get();
     nm->send(RequestAllCosmeticsPacket::create());
 
-    EventDispatcher::get()->registerListener(new Cosmetics::Event<std::vector<FullCosmetic>>("AllCosmeticsPacket", [](std::vector<FullCosmetic> cosmetics) {
+    EventDispatcher::get()->registerListener(new Cosmetics::Event<std::vector<FullCosmetic>>("AllCosmeticsPacket", [cosmeticMenu, cm, m_firstColor, m_secondColor, m_glowColor](std::vector<FullCosmetic> cosmetics) {
         for (auto cosmetic : cosmetics) {
-            log::info("cosmetic: {} - {}", cosmetic.getCosmeticID(), (int)cosmetic.getCosmeticRarity());
+            log::info("cosmetic: {}", cosmetic.createObject().dump());
+
+            auto spr = CCLayer::create();
+            spr->setContentSize({50, 50});
+
+            auto outline = CCScale9Sprite::create("GJ_square07.png");
+            outline->setContentSize({100, 100});
+            outline->setScale(0.5f);
+            outline->setPosition({25.f, 25.f});
+            spr->addChild(outline, 4);
+
+            auto rarityColor = CCLayerColor::create({ 0, 255, 255, 255 });
+            rarityColor->setContentSize({47, 2});
+            rarityColor->setPosition({1.5f, 1});
+            spr->addChild(rarityColor, 3);
+
+            auto rarityGradient = CCLayerGradient::create(
+                ccc4(0, 50, 50, 200), ccc4(0, 0, 0, 0)
+            );
+            rarityGradient->setContentSize({47, 47});
+            rarityGradient->setPosition({1.5f, 1.5f});
+            rarityGradient->setVector({0, 1});
+            spr->addChild(rarityGradient, 2);
+            
+            switch (cosmetic.typeFromID()) {
+                case Hat: {
+                    Build(cm->loadHat(cosmetic.getCosmeticID(), m_firstColor, m_secondColor, m_glowColor))
+                        .pos(25.f, 22.5f)
+                        .scale(0.425f)
+                        .zOrder(2)
+                        .parent(spr);
+                    break;
+                }
+
+                case Mask: {
+                    Build(cm->loadMask(cosmetic.getCosmeticID(), m_firstColor, m_secondColor, m_glowColor))
+                        .pos(25.f, 22.5f)
+                        .scale(0.425f)
+                        .zOrder(2)
+                        .parent(spr);
+                    break;
+                }
+
+                default: {
+                    break;
+                }
+            }
+
+            cosmeticMenu->m_contentLayer->addChild(spr, 3);
         }
+
+        cosmeticMenu->m_contentLayer->updateLayout();
+        cosmeticMenu->scrollToTop();
     }));
+
 
     return true;
 }

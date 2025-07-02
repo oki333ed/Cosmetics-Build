@@ -37,11 +37,13 @@ public:
     AllCosmeticsPacket() {}
 
     void handlePacket(matjson::Value& packetData) {
-        std::vector<FullCosmetic> cosmetics;
-        for (auto cosmetic : packetData.asArray().unwrap()) {
-            cosmetics.push_back(FullCosmetic(cosmetic));
-        }
+        geode::Loader::get()->queueInMainThread([packetData]() {
+            std::vector<FullCosmetic> cosmetics;
+            for (auto cosmetic : packetData.asArray().unwrap()) {
+                cosmetics.push_back(FullCosmetic(cosmetic));
+            }
 
-        Cosmetics::EventDispatcher::get()->dispatch("AllCosmeticsPacket", cosmetics);
+            Cosmetics::EventDispatcher::get()->dispatch("AllCosmeticsPacket", cosmetics);
+        });
     }
 };
