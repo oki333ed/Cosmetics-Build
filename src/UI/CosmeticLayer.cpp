@@ -1,15 +1,15 @@
 #include "CosmeticLayer.hpp"
 
-#include <events/EventDispatcher.hpp>
+#include <events/Cosmetic.hpp>
 #include <managers/CosmeticManager.hpp>
 #include <network/NetworkManager.hpp>
 #include <network/packets/Client.hpp>
 #include <types/Cosmetic.hpp>
+#include <types/CosmeticPlayer.hpp>
 
 #include <UIBuilder.hpp>
 
 using namespace geode::prelude;
-using namespace Cosmetics;
 
 bool CosmeticLayer::init() {
     if(!CCLayer::init()) return false;
@@ -54,7 +54,7 @@ bool CosmeticLayer::init() {
     groundLayer->getChildByID("ground-sprites")->runAction(groundRepeat);
 
     // player
-    SimplePlayer* player = SimplePlayer::create(0);
+    CosmeticsSimplePlayer* player = static_cast<CosmeticsSimplePlayer*>(CosmeticsSimplePlayer::create(0));
 
     auto m_firstColor = gm->colorForIdx(gm->getPlayerColor());
     auto m_secondColor = gm->colorForIdx(gm->getPlayerColor2());
@@ -66,6 +66,8 @@ bool CosmeticLayer::init() {
     player->enableCustomGlowColor(m_glowColor);
     if (!gm->getPlayerGlow()) player->disableGlowOutline();
     player->setPosition({winSize.width - 120.f, 146.f});
+
+    player->drawCosmetics(CosmeticManager::get()->getSelfUser().getActiveCosmetics(), m_firstColor, m_secondColor, m_glowColor);
     addChild(player, 5);
 
     // gray background
@@ -93,7 +95,19 @@ bool CosmeticLayer::init() {
     m_infoContainer->setContentSize({winSize.width / 2 - 70.f, 100.f});
     m_infoContainer->setPosition({winSize.width / 1.27f, 60});
     m_infoContainer->setOpacity(100);
+    m_infoContainer->setLayout(
+        ColumnLayout::create()->setGap(15.f)->setAxisReverse(true)->setAutoScale(false)
+    );
+    m_infoContainer->getChildByType<CCSpriteBatchNode>(0)->setPosition({0.f, 0.f});
     addChild(m_infoContainer, 3);
+
+    auto m_titleText = CCLabelBMFont::create("", "bigFont.fnt", winSize.width / 2 - 80.f);
+    m_titleText->setScale(0.70f);
+    m_infoContainer->addChild(m_titleText);
+
+    auto m_descText = CCLabelBMFont::create("", "bigFont.fnt", winSize.width / 2 - 80.f);
+    m_descText->setScale(0.45f);
+    m_infoContainer->addChild(m_descText);
 
     auto m_categoryMenu = CCMenu::create();
     m_categoryMenu->setContentSize({winSize.width / 2 - 10.f, 30});
@@ -116,11 +130,12 @@ bool CosmeticLayer::init() {
     auto cm = CosmeticManager::get();
     nm->send(RequestAllCosmeticsPacket::create());
 
-    EventDispatcher::get()->registerListener(new Cosmetics::Event<std::vector<FullCosmetic>>("AllCosmeticsPacket", [cosmeticMenu, cm, m_firstColor, m_secondColor, m_glowColor](std::vector<FullCosmetic> cosmetics) {
-        for (auto cosmetic : cosmetics) {
+    auto listener = new EventListener<EventFilter<AllCosmeticsEvent>>([cosmeticMenu, cm, m_firstColor, m_secondColor, m_glowColor, m_titleText, m_descText, m_infoContainer](AllCosmeticsEvent* ev) {
+        for (auto cosmetic : ev->getCosmetics()) {
             log::info("cosmetic: {}", cosmetic.createObject().dump());
 
             auto spr = CCLayer::create();
+            spr->setID(fmt::format("cosmetic-{}", cosmetic.getCosmeticID()));
             spr->setContentSize({50, 50});
 
             auto outline = CCScale9Sprite::create("GJ_square07.png");
@@ -146,7 +161,7 @@ bool CosmeticLayer::init() {
                 case Hat: {
                     Build(cm->loadHat(cosmetic.getCosmeticID(), m_firstColor, m_secondColor, m_glowColor))
                         .pos(25.f, 22.5f)
-                        .scale(0.425f)
+                        .scale(0.8f)
                         .zOrder(2)
                         .parent(spr);
                     break;
@@ -166,13 +181,29 @@ bool CosmeticLayer::init() {
                 }
             }
 
-            cosmeticMenu->m_contentLayer->addChild(spr, 3);
+            auto btn = Build(spr)
+                .intoMenuItem([m_titleText, m_descText, m_infoContainer, cosmetic]() {
+                    m_titleText->setString(cosmetic.getCosmeticName().c_str());
+                    m_descText->setString(cosmetic.getCosmeticDescription().c_str());
+                    m_infoContainer->updateLayout();
+                    m_infoContainer->getChildByType<CCSpriteBatchNode>(0)->setPosition({0.f, 0.f});
+                })
+                .anchorPoint(0.f, 0.f)
+                .intoNewParent(CCMenu::create())
+                .contentSize(spr->getContentSize())
+                .collect();
+            
+            spr->setPosition({0.f, 0.f});
+            spr->setScale(0.8f);
+
+            cosmeticMenu->m_contentLayer->addChild(btn, 3);
         }
 
         cosmeticMenu->m_contentLayer->updateLayout();
         cosmeticMenu->scrollToTop();
-    }));
-
+            
+        return ListenerResult::Propagate;
+    });
 
     return true;
 }

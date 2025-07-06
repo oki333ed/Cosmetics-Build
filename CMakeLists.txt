@@ -30,6 +30,7 @@ add_subdirectory($ENV{GEODE_SDK} ${CMAKE_CURRENT_BINARY_DIR}/geode)
 
 CPMAddPackage("gh:dankmeme01/uibuilder#main")
 CPMAddPackage("gh:LimeGradient/argon#main")
+CPMAddPackage("gh:KyrietS/tinyevents#master")
 
 if (CMAKE_SYSTEM_NAME STREQUAL "Windows")
     add_compile_definitions(WIN32_LEAN_AND_MEAN=1)
@@ -62,6 +63,6 @@ CPMAddPackage("gh:machinezone/IXWebSocket#dc8807e")
 install(TARGETS mbedtls mbedx509 mbedcrypto EXPORT mbedtls-targets)
 target_include_directories(${PROJECT_NAME} PRIVATE ${ixwebsocket_SOURCE_DIR} "${cereal_SOURCE_DIR}/include" src/)
 
-target_link_libraries(${PROJECT_NAME} ixwebsocket UIBuilder argon)
+target_link_libraries(${PROJECT_NAME} ixwebsocket UIBuilder argon tinyevents)
 
 setup_geode_mod(${PROJECT_NAME})

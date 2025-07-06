@@ -38,7 +38,7 @@ public:
     }
 
     int getCosmeticID() {return this->cosmeticID;}
-    std::string getCosmeticName() {return this->cosmeticName;}
+    std::string getCosmeticName() const {return this->cosmeticName;}
     int getCosmeticAmount() {return this->cosmeticAmount;}
 
     bool isEmpty() {
@@ -96,7 +96,7 @@ public:
         this->isActive = (value["isActive"].asInt().unwrapOr(0) == 0) ? false : true;
     }
 
-    std::string getCosmeticDescription() {
+    std::string getCosmeticDescription() const {
         return cosmeticDescription;
     }
 

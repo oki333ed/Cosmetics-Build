@@ -1,6 +1,6 @@
 #pragma once
 
-#include <events/EventDispatcher.hpp>
+#include <events/Cosmetic.hpp>
 #include <managers/CosmeticManager.hpp>
 #include <network/packets/Packet.hpp>
 
@@ -28,7 +28,7 @@ public:
 
     void handlePacket(matjson::Value& packetData) {
         auto activeCosmetics = CosmeticManager::get()->activeCosmeticsFromJSON(packetData);
-        Cosmetics::EventDispatcher::get()->dispatch("UserCosmeticsPacket", activeCosmetics);
+        UserCosmeticsEvent(activeCosmetics).post();
     }
 };
 
@@ -43,7 +43,7 @@ public:
                 cosmetics.push_back(FullCosmetic(cosmetic));
             }
 
-            Cosmetics::EventDispatcher::get()->dispatch("AllCosmeticsPacket", cosmetics);
+            AllCosmeticsEvent(cosmetics).post();
         });
     }
 };

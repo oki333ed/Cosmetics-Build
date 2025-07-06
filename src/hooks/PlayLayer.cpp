@@ -2,7 +2,7 @@
 
 #include <dankmeme.globed2/include/callbacks.hpp>
 #include <dankmeme.globed2/include/player.hpp>
-#include <events/EventDispatcher.hpp>
+#include <events/Cosmetic.hpp>
 #include <Geode/Geode.hpp>
 #include <hooks/PlayerObject.hpp>
 #include <managers/CosmeticManager.hpp>
@@ -25,9 +25,11 @@ bool HookedPlayLayer::init(GJGameLevel* level, bool useReplay, bool dontCreateOb
             auto cosmeticsPacket = RequestUserCosmeticsPacket::create(accountID);
             NetworkManager::get()->send(cosmeticsPacket);
 
-            Cosmetics::EventDispatcher::get()->registerListener(new Cosmetics::Event<ActiveCosmetics>("UserCosmeticsPacket", [cm, p1, p2](ActiveCosmetics activeCosmetics) {
-                cm->setDualCosmetics(activeCosmetics, p1, p2);
-            }));
+            new EventListener<EventFilter<UserCosmeticsEvent>>([cm, p1, p2](UserCosmeticsEvent* ev) {
+                cm->setDualCosmetics(ev->getCosmetics(), p1, p2);
+
+                return ListenerResult::Propagate;
+            });
         });
 
         if (onPlayerJoin) {

@@ -52,10 +52,11 @@ CCNode* CosmeticManager::loadHat(int id, ccColor3B primaryColor, ccColor3B secon
         .color(secondaryColor)
         .id("mask_second");
     
-/*     if (auto white = CCSprite::createWithSpriteFrameName(fmt::format("{}_white.png"_spr, id).c_str())) {
+    auto white = CCSprite::createWithSpriteFrameName(fmt::format("{}_white.png"_spr, id).c_str());
+    if (!white || !white->getUserObject("geode.texture-loader/fallback")) {
         white->setID("mask_white");
         node->addChild(white);
-    } */
+    }
 
     return node;
 }

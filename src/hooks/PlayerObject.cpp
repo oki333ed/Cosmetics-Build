@@ -29,7 +29,7 @@ void CosmeticsPlayerObject::drawHat(Cosmetic hat) {
     CCNode* spr;
     CCNode* regularHat;
     Build(CosmeticManager::get()->loadHat(hat.getCosmeticID(), this->m_playerColor1, this->m_playerColor2, this->m_glowColor))
-        .scale(0.75f)
+        .posY(23.f)
         .id(fmt::format("hat-{}"_spr, hat.getCosmeticID()))
         .parent(this->m_mainLayer)
         .anchorPoint({0.5f, 0.5f})
@@ -41,8 +41,8 @@ void CosmeticsPlayerObject::drawHat(Cosmetic hat) {
         .store(regularHat)
         .intoNewSibling(CCSprite::createWithSpriteFrameName(fmt::format("{}_outline.png"_spr, hat.getCosmeticID()).c_str()))
             .color(this->m_glowColor)
-            .id("hat_glow")
-            .scale(0.75f)
+            .id(fmt::format("hat-{}-glow"_spr, hat.getCosmeticID()))
+            .posY(23.f)
             .zOrder(0);
 }
 

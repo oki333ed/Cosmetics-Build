@@ -2,7 +2,6 @@
 
 #include "network/packets/Packet.hpp"
 
-#include <events/EventDispatcher.hpp>
 #include <managers/CosmeticManager.hpp>
 #include <network/NetworkManager.hpp>
 #include <network/packets/Client.hpp>
