@@ -58,6 +58,7 @@ bool CosmeticLayer::init() {
     auto groundRepeat = CCRepeatForever::create(groundSeq);
     groundLayer->getChildByID("ground-sprites")->runAction(groundRepeat);
 
+    // player
     CosmeticsSimplePlayer* player = static_cast<CosmeticsSimplePlayer*>(CosmeticsSimplePlayer::create(0));
 
     auto m_firstColor = gm->colorForIdx(gm->getPlayerColor());
@@ -73,13 +74,16 @@ bool CosmeticLayer::init() {
 
     player->drawCosmetics(CosmeticManager::get()->getSelfUser().getActiveCosmetics(), m_firstColor, m_secondColor, m_glowColor);
     bgLayer->addChild(player, 5);
-
+  
     auto m_background = CCLayerColor::create({25, 25, 25, 255}, winSize.width, winSize.height);
     m_background->setContentWidth(winSize.width - 360.f);
     m_background->setID("background");
     addChild(m_background, 2);
 
-    auto gradient = CCLayerGradient::create(ccc4(25, 25, 25, 255), ccc4(0, 0, 0, 0));
+    auto gradient = CCLayerGradient::create(
+        ccc4(25, 25, 25, 255), ccc4(0, 0, 0, 0)
+    );
+
     gradient->setContentSize(m_bg->getContentSize());
     gradient->setPosition(winSize.width - 360.f, 0.f);
     gradient->setAnchorPoint({0, 0.5f});
@@ -213,11 +217,13 @@ bool CosmeticLayer::init() {
             spr->addChild(outline, 4);
 
             auto rarityColor = CCLayerColor::create({ 0, 255, 255, 255 });
-            rarityColor->setContentSize({47, 2.f});
+            rarityColor->setContentSize({47.f, 2.f});
             rarityColor->setPosition({1.5f, 1.f});
             spr->addChild(rarityColor, 3);
 
-            auto rarityGradient = CCLayerGradient::create(ccc4(0, 50, 50, 200), ccc4(0, 0, 0, 0));
+            auto rarityGradient = CCLayerGradient::create(
+              ccc4(0, 50, 50, 200), ccc4(0, 0, 0, 0)
+            );
             rarityGradient->setContentSize({50.f, 50.f});
             rarityGradient->setPosition({0, 0});
             rarityGradient->setVector({0, 1});
