@@ -13,8 +13,9 @@ let db: Database<sqlite3.Database, sqlite3.Statement>;
 let dbPath = "./database.db"
 
 export async function init() {
+    const dbPath = process.env.dbPath;
     db = await open({
-        filename: dbPath,
+        filename: dbPath as string,
         driver: sqlite3.Database
     })
 }
