@@ -6,7 +6,7 @@ import * as database from './database/database';
 import { apiRouter } from './routes/api';
 
 const app = new WebSocketExpress();
-const port = process.env.port;
+const port = parseInt(process.env.PORT as string) | 8787
 
 app.use("/api", apiRouter);
 
@@ -17,5 +17,5 @@ app.get("/", (req, res) => {
 database.init()
 
 app.listen(port, () => {
-    console.log(`Server running at http://localhost:${port}`);
+    console.log(`Server running at http://localhost:${process.env.PORT}`);
 });

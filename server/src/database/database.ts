@@ -10,12 +10,11 @@ import { filterAllCosmetics, getActiveCosmetics } from "../utils";
 import { PacketResponse } from "../types/response";
 
 let db: Database<sqlite3.Database, sqlite3.Statement>;
-let dbPath = "./database.db"
 
 export async function init() {
-    const dbPath = process.env.dbPath;
+    const dbPath = process.env.DBPATH as string | "./database.db";
     db = await open({
-        filename: dbPath as string,
+        filename: dbPath,
         driver: sqlite3.Database
     })
 }
