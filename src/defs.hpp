@@ -1,3 +1,4 @@
+// funny stuff i need
 #ifdef GEODE_IS_WINDOWS
     #ifdef COSMETICS_EXPORTING
         #define COSMETICS_DLL __declspec(dllexport)
@@ -9,6 +10,7 @@
 #endif
 
 #include <Geode/loader/GameEvent.hpp>
+// funny on game stuff
 // thx prev :3
 
 #define $on_game(type) \

@@ -5,7 +5,7 @@ import axios, {Axios} from "axios"
 import {open, Database} from 'sqlite';
 
 import { User } from "../types/user";
-import { Cosmetic, FullCosmetic } from "../types/cosmetics";
+import { AccountCosmetics, accountCosmeticsGetAccountCosmetics, ActiveCosmetics, activeCosmeticsGetActiveCosmetics, Cosmetic, FullCosmetic } from "../types/cosmetics";
 import { filterAllCosmetics, getActiveCosmetics } from "../utils";
 import { PacketResponse } from "../types/response";
 
@@ -58,8 +58,58 @@ export async function createUser(accountID: number, token: string) {
         }
     })
 
-    console.log(packetRes)
+    console.log(`User ${accountID} has just logged in`)
     return packetRes;
+}
+
+export async function updateUser(accountID: number, creditsAmount: number, activeCosmetics: ActiveCosmetics, accountCosmetics: AccountCosmetics) {
+    let newCreditsAmount: number;
+    const oldCreditsAmount = await db.get("SELECT * FROM Accounts WHERE accountID = ?", accountID)
+    if (oldCreditsAmount !== undefined) {
+        newCreditsAmount = oldCreditsAmount["creditsAmount"] + creditsAmount
+        const updatingUserAcc = await db.get("UPDATE Accounts SET creditsAmount = ? WHERE accountID = ?", newCreditsAmount, accountID);
+        if (updatingUserAcc === undefined) {
+
+        } else {
+            let cosmetics = activeCosmeticsGetActiveCosmetics(activeCosmetics);
+            await Promise.all(cosmetics.map(async (cosmetic: Cosmetic) => {
+                setCosmeticActive(accountID, cosmetic.cosmeticID)
+            }))
+            
+            let userCosmetics = (await getUserInfo(accountID)).allCosmetics
+
+            // this sucks but whatever
+            if (userCosmetics.hats.length <= accountCosmetics.hats.length) {
+                let newCosmetics = accountCosmetics.hats.filter(element => !userCosmetics.hats.includes(element))
+                await Promise.all(newCosmetics.map((cosmetic: Cosmetic) => {
+                    addCosmetic(accountID, cosmetic.cosmeticID, (cosmetic.isActive === 0))
+                }))
+            }
+
+            if (userCosmetics.masks.length <= accountCosmetics.masks.length) {
+                let newCosmetics = accountCosmetics.masks.filter(element => !userCosmetics.masks.includes(element))
+                await Promise.all(newCosmetics.map((cosmetic: Cosmetic) => {
+                    addCosmetic(accountID, cosmetic.cosmeticID, (cosmetic.isActive === 0))
+                }))
+            }
+
+            if (userCosmetics.objects.length <= accountCosmetics.objects.length) {
+                let newCosmetics = accountCosmetics.objects.filter(element => !userCosmetics.objects.includes(element))
+                await Promise.all(newCosmetics.map((cosmetic: Cosmetic) => {
+                    addCosmetic(accountID, cosmetic.cosmeticID, (cosmetic.isActive === 0))
+                }))
+            }
+
+            if (userCosmetics.particles.length <= accountCosmetics.particles.length) {
+                let newCosmetics = accountCosmetics.particles.filter(element => !userCosmetics.particles.includes(element))
+                await Promise.all(newCosmetics.map((cosmetic: Cosmetic) => {
+                    addCosmetic(accountID, cosmetic.cosmeticID, (cosmetic.isActive === 0))
+                }))
+            }
+        }
+    }
+
+    return getUserInfo(accountID);
 }
 
 export async function getAllCosmetics() {
@@ -70,7 +120,9 @@ export async function getAllCosmetics() {
         let newCos: FullCosmetic = {
             cosmeticID: cosmetic["cosmeticID"],
             cosmeticName: cosmetic["cosmeticName"],
+            cosmeticDescription: cosmetic["cosmeticDescription"],
             cosmeticAmount: cosmetic["cosmeticAmount"],
+            cosmeticRarity: cosmetic["cosmeticRarity"],
             isActive: 0
         }
         allCosmetics.push(newCos)

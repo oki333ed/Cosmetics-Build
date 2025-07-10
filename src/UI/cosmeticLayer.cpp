@@ -1,4 +1,15 @@
-#include "cosmeticLayer.hpp"
+#include "CosmeticLayer.hpp"
+
+#include <events/Cosmetic.hpp>
+#include <managers/CosmeticManager.hpp>
+#include <network/NetworkManager.hpp>
+#include <network/packets/Client.hpp>
+#include <types/Cosmetic.hpp>
+#include <types/CosmeticPlayer.hpp>
+
+#include <UIBuilder.hpp>
+
+using namespace geode::prelude;
 
 bool CosmeticLayer::init() {
     if(!CCLayer::init()) return false;
@@ -47,11 +58,7 @@ bool CosmeticLayer::init() {
     auto groundRepeat = CCRepeatForever::create(groundSeq);
     groundLayer->getChildByID("ground-sprites")->runAction(groundRepeat);
 
-<<<<<<< Updated upstream:src/UI/cosmeticLayer.cpp
-    // player
-=======
->>>>>>> Stashed changes:src/UI/CosmeticLayer.cpp
-    SimplePlayer* player = SimplePlayer::create(0);
+    CosmeticsSimplePlayer* player = static_cast<CosmeticsSimplePlayer*>(CosmeticsSimplePlayer::create(0));
 
     auto m_firstColor = gm->colorForIdx(gm->getPlayerColor());
     auto m_secondColor = gm->colorForIdx(gm->getPlayerColor2());
@@ -63,14 +70,10 @@ bool CosmeticLayer::init() {
     player->enableCustomGlowColor(m_glowColor);
     if (!gm->getPlayerGlow()) player->disableGlowOutline();
     player->setPosition({winSize.width - 120.f, 146.f});
-<<<<<<< Updated upstream:src/UI/cosmeticLayer.cpp
-    addChild(player, 5);
 
-    // gray background
-=======
+    player->drawCosmetics(CosmeticManager::get()->getSelfUser().getActiveCosmetics(), m_firstColor, m_secondColor, m_glowColor);
     bgLayer->addChild(player, 5);
 
->>>>>>> Stashed changes:src/UI/CosmeticLayer.cpp
     auto m_background = CCLayerColor::create({25, 25, 25, 255}, winSize.width, winSize.height);
     m_background->setContentWidth(winSize.width - 360.f);
     m_background->setID("background");
@@ -96,13 +99,9 @@ bool CosmeticLayer::init() {
     addChild(infoMenu, 5);
 
     auto m_infoContainer = CCScale9Sprite::create("square02_001.png");
-    m_infoContainer->setContentSize(infoMenu->getContentSize());
+    m_infoContainer->setContentSize({180.f, 100.f});
     m_infoContainer->setPosition({infoMenu->getContentWidth() / 2, infoMenu->getContentHeight() / 2});
     m_infoContainer->setOpacity(100);
-<<<<<<< Updated upstream:src/UI/cosmeticLayer.cpp
-    addChild(m_infoContainer, 3);
-
-=======
     infoMenu->addChild(m_infoContainer, 3);
 
     auto m_titleText = CCLabelBMFont::create("cosmeticName", "bigFont.fnt");
@@ -160,7 +159,6 @@ bool CosmeticLayer::init() {
     categoryLine->setPosition({menu->getContentWidth() / 2, 233.f});
     menu->addChild(categoryLine, 3);
 
->>>>>>> Stashed changes:src/UI/CosmeticLayer.cpp
     auto m_categoryMenu = CCMenu::create();
     m_categoryMenu->setContentSize({menu->getContentWidth() - 10.f, 30});
     m_categoryMenu->setLayout(AxisLayout::create()->setGap(5)->setAutoScale(false));
@@ -184,13 +182,6 @@ bool CosmeticLayer::init() {
     m_categoryMenu->addChild(categoryPets, 5);
     m_categoryMenu->updateLayout();
 
-<<<<<<< Updated upstream:src/UI/cosmeticLayer.cpp
-    auto cosmeticMenu = ScrollLayer::create({winSize.width / 2, 230}, true, true);
-    cosmeticMenu->getChildByID("content-layer")->setLayout(AxisLayout::create()->setGap(5)->setGrowCrossAxis(true));
-    cosmeticMenu->setAnchorPoint({0.5, 1});
-    cosmeticMenu->setPosition({winSize.width / 4 - 120.f, 10.f});
-    addChild(cosmeticMenu, 4);
-=======
     auto cosmeticScroll = ScrollLayer::create({menu->getContentWidth() - 10.f, 228}, true, true);
     cosmeticScroll->getChildByID("content-layer")->setLayout(AxisLayout::create());
     cosmeticScroll->setAnchorPoint({0.5, 1});
@@ -203,38 +194,11 @@ bool CosmeticLayer::init() {
     cosmeticMenu->setPosition({cosmeticScroll->getContentWidth() / 2, 228.f});
     cosmeticMenu->setLayout(AxisLayout::create()->setGap(5)->setGrowCrossAxis(true));
     cosmeticScroll->getChildByID("content-layer")->addChild(cosmeticMenu, 5);
->>>>>>> Stashed changes:src/UI/CosmeticLayer.cpp
 
-    // buttons test
-    for (int i = 0; i < 50; ++i) {
-        auto spr = CCLayer::create();
-        spr->setContentSize({50, 50});
-        cosmeticMenu->getChildByID("content-layer")->addChild(spr, 3);
+    auto nm = NetworkManager::get();
+    auto cm = CosmeticManager::get();
+    nm->send(RequestAllCosmeticsPacket::create());
 
-<<<<<<< Updated upstream:src/UI/cosmeticLayer.cpp
-        auto test = CCScale9Sprite::create("GJ_square07.png");
-        test->setContentSize({100, 100});
-        test->setScale(0.5f);
-        test->setPosition({spr->getContentWidth() / 2, spr->getContentHeight() / 2});
-        spr->addChild(test, 4);
-
-        auto rarityColor = CCLayerColor::create({ 0, 255, 255, 255 });
-        rarityColor->setContentSize({47, 2});
-        rarityColor->setPosition({1.5f, 1});
-        spr->addChild(rarityColor, 3);
-
-        auto rarityGradient = CCLayerGradient::create(
-            ccc4(0, 50, 50, 200), ccc4(0, 0, 0, 0)
-        );
-        rarityGradient->setContentSize({47, 47});
-        rarityGradient->setPosition({1.5f, 1.5f});
-        rarityGradient->setVector({0, 1});
-        spr->addChild(rarityGradient, 2);
-    }
-
-    cosmeticMenu->getChildByID("content-layer")->updateLayout();
-    cosmeticMenu->scrollToTop();
-=======
     auto listener = new EventListener<EventFilter<AllCosmeticsEvent>>([bgLayer, infoMenu, cosmeticMenu, cosmeticScroll, cm, m_firstColor, m_secondColor, m_glowColor, m_titleText, m_descText, m_infoContainer](AllCosmeticsEvent* ev) {
         for (auto cosmetic : ev->getCosmetics()) {
             log::info("cosmetic: {}", cosmetic.createObject().dump());
@@ -313,7 +277,6 @@ bool CosmeticLayer::init() {
             
         return ListenerResult::Propagate;
     });
->>>>>>> Stashed changes:src/UI/CosmeticLayer.cpp
 
     return true;
 }
