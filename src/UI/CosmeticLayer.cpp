@@ -186,13 +186,13 @@ bool CosmeticLayer::init() {
     m_categoryMenu->addChild(categoryPets, 5);
     m_categoryMenu->updateLayout();
 
-    auto cosmeticScroll = ScrollLayer::create({menu->getContentWidth() - 10.f, 228}, true, true);
+    Ref<ScrollLayer> cosmeticScroll = ScrollLayer::create({menu->getContentWidth() - 10.f, 228}, true, true);
     cosmeticScroll->getChildByID("content-layer")->setLayout(AxisLayout::create());
     cosmeticScroll->setAnchorPoint({0.5, 1});
     cosmeticScroll->setPosition({5.f, 0.f});
     menu->addChild(cosmeticScroll, 4);
 
-    auto cosmeticMenu = CCMenu::create();
+    Ref<CCMenu> cosmeticMenu = CCMenu::create();
     cosmeticMenu->setContentSize({menu->getContentWidth() - 10.f, 228});
     cosmeticMenu->setAnchorPoint({0.5, 1.f});
     cosmeticMenu->setPosition({cosmeticScroll->getContentWidth() / 2, 228.f});
