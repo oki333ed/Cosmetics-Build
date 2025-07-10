@@ -1,1 +1,1 @@
-Edit this file to change your mod's support info, or delete it if you don't need it.
+You can support us and get VIP stuff here: https://coff.ee/gdcosmetics
