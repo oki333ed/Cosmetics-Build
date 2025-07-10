@@ -12,10 +12,13 @@
 	"developers": [
 		"LimeGradient",
 		"Dasshu",
-		"KampWSki"
+		"kampwski"
 	],
 	"description": "Add cosmetics to Geometry Dash!",
 	"resources": {
+		"sprites": [
+			"resources/*.png"
+		],
 		"spritesheets": {
 			"HatsSheet": [
 				"resources/hats/*.png"
