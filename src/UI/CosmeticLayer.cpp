@@ -122,7 +122,7 @@ bool CosmeticLayer::init() {
     infoLine->setPosition({infoMenu->getContentWidth() / 2, 75.f});
     infoMenu->addChild(infoLine, 3);
 
-    auto m_descText = CCLabelBMFont::create("cosmeticDescription", "bigFont.fnt");
+    auto m_descText = CCLabelBMFont::create("cosmeticDescription", "bigFont.fnt", m_infoContainer->getContentWidth() - 20.f);
     m_descText->setPosition({infoMenu->getContentWidth() / 2, 65.f});
     m_descText->setColor({255, 255, 255});
     m_descText->limitLabelWidth(170.f, 0.3f, 0.1f);
