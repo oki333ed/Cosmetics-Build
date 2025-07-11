@@ -72,7 +72,8 @@ bool CosmeticLayer::init() {
     if (!gm->getPlayerGlow()) player->disableGlowOutline();
     player->setPosition({winSize.width - 120.f, 146.f});
 
-    player->drawCosmetics(CosmeticManager::get()->getSelfUser().getActiveCosmetics(), m_firstColor, m_secondColor, m_glowColor);
+    auto activeCosmetics = CosmeticManager::get()->getSelfUser().getActiveCosmetics();
+    player->drawCosmetics(activeCosmetics, m_firstColor, m_secondColor, m_glowColor);
     bgLayer->addChild(player, 5);
   
     auto m_background = CCLayerColor::create({25, 25, 25, 255}, winSize.width, winSize.height);
@@ -203,7 +204,7 @@ bool CosmeticLayer::init() {
     auto cm = CosmeticManager::get();
     nm->send(RequestAllCosmeticsPacket::create());
 
-    auto listener = new EventListener<EventFilter<AllCosmeticsEvent>>([bgLayer, infoMenu, cosmeticMenu, cosmeticScroll, cm, m_firstColor, m_secondColor, m_glowColor, m_titleText, m_descText, m_infoContainer](AllCosmeticsEvent* ev) {
+    auto listener = new EventListener<EventFilter<AllCosmeticsEvent>>([bgLayer, infoMenu, cosmeticMenu, cosmeticScroll, cm, m_firstColor, m_secondColor, m_glowColor, m_titleText, m_descText, m_infoContainer, player, activeCosmetics](AllCosmeticsEvent* ev) {
         for (auto cosmetic : ev->getCosmetics()) {
             log::info("cosmetic: {}", cosmetic.createObject().dump());
 
@@ -254,11 +255,27 @@ bool CosmeticLayer::init() {
             }
 
             auto btn = Build(spr)
-                .intoMenuItem([bgLayer, infoMenu, m_titleText, m_descText, m_infoContainer, cosmetic]() {
+                .intoMenuItem([bgLayer, infoMenu, m_titleText, m_descText, m_infoContainer, cosmetic, player, m_firstColor, m_secondColor, m_glowColor, activeCosmetics]() {
                     m_titleText->setString(cosmetic.getCosmeticName().c_str());
                     m_descText->setString(cosmetic.getCosmeticDescription().c_str());
                     m_infoContainer->updateLayout();
                     m_infoContainer->getChildByType<CCSpriteBatchNode>(0)->setPosition({0.f, 0.f});
+
+                    switch (cosmetic.typeFromID()) {
+                        case Hat: {
+                            player->drawHat(cosmetic, m_firstColor, m_secondColor, m_glowColor);
+                            break;
+                        }
+
+                        case Mask: {
+                            player->drawMask(cosmetic, m_firstColor, m_secondColor, m_glowColor);
+                            break;
+                        }
+
+                        default: {
+                            break;
+                        }
+                    }
 
                     infoMenu->setVisible(true);
                     bgLayer->runAction(CCSequence::create(CCEaseSineInOut::create(CCScaleTo::create(0.5f, 2.f)), nullptr));

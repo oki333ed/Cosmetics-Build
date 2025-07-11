@@ -48,7 +48,7 @@ public:
         return false;
     }
 
-    CosmeticType typeFromID() {
+    CosmeticType typeFromID() const {
         if (this->cosmeticID > 1000 && this->cosmeticID < 2000) {
             return CosmeticType::Hat;
         } else if (this->cosmeticID > 2000 && this->cosmeticID < 3000) {
