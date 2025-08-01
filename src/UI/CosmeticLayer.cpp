@@ -130,21 +130,40 @@ bool CosmeticLayer::init() {
 
     Build<CCSprite>::createSpriteName("GJ_editModeBtn_001.png")
         .scale(0.5f)
-        .intoMenuItem([this, bgLayer]() {})
+        .intoMenuItem([this, bgLayer]() {
+            Notification::create("This feature is coming soon!", NotificationIcon::Error)->show();
+        })
         .pos({infoMenu->getContentWidth() / 2 - 60.f, 35.f})
         .parent(infoMenu);
 
     Build<IconButtonSprite>::create("GJ_square07.png", CCSprite::createWithSpriteFrameName("GJ_plus3Btn_001.png"), "equip", "bigFont.fnt")
         .scale(0.75f)
-        .intoMenuItem([this, bgLayer]() {})
+        .intoMenuItem([this, bgLayer]() {
+            auto nm = NetworkManager::get();
+            nm->send(SetCosmeticActivePacket::create(GJAccountManager::get()->m_accountID, this->selectedCosmetic.getCosmeticID()));
+        })
         .pos({infoMenu->getContentWidth() / 2, 35})
+        .zOrder(3)
         .parent(infoMenu);
 
     Build<CCSprite>::createSpriteName("GJ_paintBtn_001.png")
         .scale(0.5f)
-        .intoMenuItem([this, bgLayer]() {})
+        .intoMenuItem([this, bgLayer]() {
+            Notification::create("This feature is coming soon!", NotificationIcon::Error)->show();
+        })
         .pos({infoMenu->getContentWidth() / 2 + 60.f, 35.f})
         .parent(infoMenu);
+
+    new EventListener<EventFilter<CosmeticSetActiveEvent>>(+[](CosmeticSetActiveEvent* ev) {
+        auto res = ev->getPacketRes();
+        if (res.code == 401) {
+            Notification::create("You do not own this cosmetic!", NotificationIcon::Error)->show();
+        } else if (res.code == 200) {
+            Notification::create("Cosmetic successfully set!", NotificationIcon::Success)->show();
+        }
+
+        return ListenerResult::Propagate;
+    });
 
     auto menu = CCMenu::create();
     menu->setContentSize({winSize.width - 240.f, 260});
@@ -170,20 +189,22 @@ bool CosmeticLayer::init() {
     m_categoryMenu->setPosition({menu->getContentWidth() / 2, 247.f});
     menu->addChild(m_categoryMenu, 3);
 
-    auto categoryHats = IconButtonSprite::create("GJ_square07.png", CCSprite::createWithSpriteFrameName("d_heart01_001.png"), "hats", "bigFont.fnt");
-    categoryHats->setScale(0.5f);
+    auto createCategoryButton = [](std::string category) {
+        auto ibs = IconButtonSprite::create("GJ_square07.png", CCSprite::createWithSpriteFrameName("d_heart01_001.png"), category.c_str(), "bigFont.fnt");
+        ibs->setScale(0.5f);
+        return ibs;
+    };
+
+    auto categoryHats = createCategoryButton("Hats");
     m_categoryMenu->addChild(categoryHats, 5);
 
-    auto categoryMasks = IconButtonSprite::create("GJ_square07.png", CCSprite::createWithSpriteFrameName("d_heart01_001.png"), "masks", "bigFont.fnt");
-    categoryMasks->setScale(0.5f);
+    auto categoryMasks = createCategoryButton("Masks");
     m_categoryMenu->addChild(categoryMasks, 5);
 
-    auto categoryObjects = IconButtonSprite::create("GJ_square07.png", CCSprite::createWithSpriteFrameName("d_heart01_001.png"), "objects", "bigFont.fnt");
-    categoryObjects->setScale(0.5f);
+    auto categoryObjects = createCategoryButton("Objects");
     m_categoryMenu->addChild(categoryObjects, 5);
 
-    auto categoryPets = IconButtonSprite::create("GJ_square07.png", CCSprite::createWithSpriteFrameName("d_heart01_001.png"), "pets", "bigFont.fnt");
-    categoryPets->setScale(0.5f);
+    auto categoryPets = createCategoryButton("Pets");
     m_categoryMenu->addChild(categoryPets, 5);
     m_categoryMenu->updateLayout();
 
@@ -204,10 +225,8 @@ bool CosmeticLayer::init() {
     auto cm = CosmeticManager::get();
     nm->send(RequestAllCosmeticsPacket::create());
 
-    auto listener = new EventListener<EventFilter<AllCosmeticsEvent>>([bgLayer, infoMenu, cosmeticMenu, cosmeticScroll, cm, m_firstColor, m_secondColor, m_glowColor, m_titleText, m_descText, m_infoContainer, player, activeCosmetics](AllCosmeticsEvent* ev) {
+    auto listener = new EventListener<EventFilter<AllCosmeticsEvent>>([bgLayer, infoMenu, cosmeticMenu, cosmeticScroll, cm, m_firstColor, m_secondColor, m_glowColor, m_titleText, m_descText, m_infoContainer, player, activeCosmetics, this] (AllCosmeticsEvent* ev) {
         for (auto cosmetic : ev->getCosmetics()) {
-            log::info("cosmetic: {}", cosmetic.createObject().dump());
-
             auto spr = CCLayer::create();
             spr->setID(fmt::format("cosmetic-{}", cosmetic.getCosmeticID()));
             spr->setContentSize({50.f, 50.f});
@@ -255,7 +274,7 @@ bool CosmeticLayer::init() {
             }
 
             auto btn = Build(spr)
-                .intoMenuItem([bgLayer, infoMenu, m_titleText, m_descText, m_infoContainer, cosmetic, player, m_firstColor, m_secondColor, m_glowColor, activeCosmetics]() {
+                .intoMenuItem([bgLayer, infoMenu, m_titleText, m_descText, m_infoContainer, cosmetic, player, m_firstColor, m_secondColor, m_glowColor, activeCosmetics, this]() {
                     m_titleText->setString(cosmetic.getCosmeticName().c_str());
                     m_descText->setString(cosmetic.getCosmeticDescription().c_str());
                     m_infoContainer->updateLayout();
@@ -276,6 +295,7 @@ bool CosmeticLayer::init() {
                             break;
                         }
                     }
+                    this->selectedCosmetic = cosmetic;
 
                     infoMenu->setVisible(true);
                     bgLayer->runAction(CCSequence::create(CCEaseSineInOut::create(CCScaleTo::create(0.5f, 2.f)), nullptr));

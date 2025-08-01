@@ -24,6 +24,8 @@ public:
             existingHatGlow->removeMeAndCleanup();
         }
 
+        this->hat = hat;
+
         Build(cm->loadHat(hat.getCosmeticID(), playerColor1, playerColor2, playerGlowColor))
             .posY(23.f)
             .id(fmt::format("hat-{}"_spr, hat.getCosmeticID()))
@@ -35,8 +37,6 @@ public:
                 .id(fmt::format("hat-{}-glow"_spr, hat.getCosmeticID()))
                 .posY(23.f)
                 .zOrder(0);
-
-        this->hat = hat;
     }
 
     void drawMask(Cosmetic mask, cocos2d::ccColor3B playerColor1, cocos2d::ccColor3B playerColor2, cocos2d::ccColor3B playerGlowColor) {

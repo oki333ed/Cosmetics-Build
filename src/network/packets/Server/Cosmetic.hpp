@@ -18,7 +18,9 @@ public:
     CosmeticSetActivePacket() {}
 
     void handlePacket(matjson::Value& packetData) {
-
+        geode::Loader::get()->queueInMainThread([packetData]() {
+            CosmeticSetActiveEvent(packetData["code"].asInt().unwrap(), packetData["message"].asString().unwrap()).post();
+        });
     }
 };
 

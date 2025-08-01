@@ -29,3 +29,20 @@ public:
         return m_cosmetics;
     }
 };
+
+class CosmeticSetActiveEvent : public geode::Event {
+protected:
+    struct PacketRes {
+        int code;
+        std::string message;
+    };
+
+    PacketRes res;
+
+public:
+    CosmeticSetActiveEvent(int code, std::string message) : res({code, message}) {}
+
+    PacketRes getPacketRes() const {
+        return res;
+    }
+};
