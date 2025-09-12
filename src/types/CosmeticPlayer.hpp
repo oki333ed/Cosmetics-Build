@@ -9,22 +9,24 @@
 
 class CosmeticsSimplePlayer : public SimplePlayer {
 protected:
-    Cosmetic hat;
-    Cosmetic mask;
+    std::unique_ptr<Cosmetic> hat = nullptr;
+    std::unique_ptr<Cosmetic> mask = nullptr;
 
 public:
     void drawHat(Cosmetic hat, cocos2d::ccColor3B playerColor1, cocos2d::ccColor3B playerColor2, cocos2d::ccColor3B playerGlowColor) {
         auto cm = CosmeticManager::get();
 
-        auto existingHat = this->getChildByID(fmt::format("hat-{}"_spr, this->hat.getCosmeticID()));
-        auto existingHatGlow = this->getChildByID(fmt::format("hat-{}-glow"_spr, this->hat.getCosmeticID()));
-
-        if (existingHat && existingHatGlow) {
-            existingHat->removeMeAndCleanup();
-            existingHatGlow->removeMeAndCleanup();
+        if (this->hat != nullptr) {
+            auto existingHat = this->getChildByID(fmt::format("hat-{}"_spr, this->hat->getCosmeticID()));
+            auto existingHatGlow = this->getChildByID(fmt::format("hat-{}-glow"_spr, this->hat->getCosmeticID()));
+    
+            if (existingHat && existingHatGlow) {
+                existingHat->removeMeAndCleanup();
+                existingHatGlow->removeMeAndCleanup();
+            }
         }
 
-        this->hat = hat;
+        this->hat = std::make_unique<Cosmetic>(hat);
 
         Build(cm->loadHat(hat.getCosmeticID(), playerColor1, playerColor2, playerGlowColor))
             .posY(23.f)
@@ -41,13 +43,14 @@ public:
 
     void drawMask(Cosmetic mask, cocos2d::ccColor3B playerColor1, cocos2d::ccColor3B playerColor2, cocos2d::ccColor3B playerGlowColor) {
         auto cm = CosmeticManager::get();
-
-        auto existingMask = this->getChildByID(fmt::format("mask-{}"_spr, this->mask.getCosmeticID()));
-        auto existingMaskGlow = this->getChildByID(fmt::format("mask-{}-glow"_spr, this->mask.getCosmeticID()));
-
-        if (existingMask && existingMaskGlow) {
-            existingMask->removeMeAndCleanup();
-            existingMaskGlow->removeMeAndCleanup();
+        if (this->mask != nullptr) {
+            auto existingMask = this->getChildByID(fmt::format("mask-{}"_spr, this->mask->getCosmeticID()));
+            auto existingMaskGlow = this->getChildByID(fmt::format("mask-{}-glow"_spr, this->mask->getCosmeticID()));
+    
+            if (existingMask && existingMaskGlow) {
+                existingMask->removeMeAndCleanup();
+                existingMaskGlow->removeMeAndCleanup();
+            }
         }
 
         Build(cm->loadMask(mask.getCosmeticID(), playerColor1, playerColor2, playerGlowColor))
@@ -62,7 +65,7 @@ public:
                 .scale(0.75f)
                 .zOrder(0);
 
-        this->mask = mask;
+        this->mask = std::make_unique<Cosmetic>(mask);
     }
 
     void drawCosmetics(ActiveCosmetics cosmetics, cocos2d::ccColor3B playerColor1, cocos2d::ccColor3B playerColor2, cocos2d::ccColor3B playerGlowColor) {
